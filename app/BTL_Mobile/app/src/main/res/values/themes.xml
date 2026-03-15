@@ -1,0 +1,18 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.MathKid" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.MathKid" parent="Base.Theme.MathKid" />
+
+    <style name="Theme.MathKid.Splash" parent="Theme.SplashScreen">
+        <!-- Màu nền -->
+        <item name="windowSplashScreenBackground">@color/kid_theme</item>
+        <!-- Logo -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
+        <!-- Theme sau khi splash -->
+        <item name="postSplashScreenTheme">@style/Theme.MathKid</item>
+    </style>
+</resources>

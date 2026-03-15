@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
+    tools:context=".Welcome">
+
+    <View
+        android:id="@+id/circleBg"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:background="@drawable/bg_circle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="120dp"/>
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="359dp"
+        android:layout_height="304dp"
+        android:src="@drawable/logo"
+        app:layout_constraintBottom_toBottomOf="@id/circleBg"
+        app:layout_constraintEnd_toEndOf="@id/circleBg"
+        app:layout_constraintStart_toStartOf="@id/circleBg"
+        app:layout_constraintTop_toTopOf="@id/circleBg"/>
+
+    <ImageView
+        android:id="@+id/icon_star"
+        android:layout_width="36dp"
+        android:layout_height="37dp"
+        android:src="@drawable/ic_star"
+        app:layout_constraintCircle="@id/circleBg"
+        app:layout_constraintCircleAngle="0"
+        app:layout_constraintCircleRadius="150dp"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/icon_pencil"
+        android:layout_width="63dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="312dp"
+        android:layout_marginTop="64dp"
+        android:src="@drawable/ic_pencil"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/icon_paint"
+        android:layout_width="38dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="108dp"
+        android:src="@drawable/ic_paint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/icon_ballon"
+        android:layout_width="63dp"
+        android:layout_height="77dp"
+        android:layout_marginStart="124dp"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/ic_ballon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/icon_book"
+        android:layout_width="45dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="352dp"
+        android:layout_marginEnd="36dp"
+        android:src="@drawable/ic_book"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/titleWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WELCOME TO MATHKIDS!"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        android:textColor="#2E7D32"
+        android:fontFamily="@font/concertone_regular"
+        android:letterSpacing="0.05"
+        android:shadowColor="#80000000"
+        android:shadowDx="4"
+        android:shadowDy="6"
+        android:shadowRadius="5"
+        app:layout_constraintTop_toBottomOf="@id/logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="30dp"/>
+    <TextView
+        android:id="@+id/subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Start learning math the fun way! Count, add, and subtract with your owl friend."
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textColor="#6A5E5E"
+        android:padding="20dp"
+        android:fontFamily="@font/concertone_regular"
+        app:layout_constraintTop_toBottomOf="@id/titleWelcome"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnLogin"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="45dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/btn_green"
+        android:text="Login"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/subtitle" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnRegister"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:text="Register"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:background="@drawable/btn_orange"
+        app:layout_constraintTop_toBottomOf="@id/btnLogin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="20dp"/>
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
