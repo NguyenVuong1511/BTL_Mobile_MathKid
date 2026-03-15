@@ -68,7 +68,7 @@ Run → chọn Emulator hoặc thiết bị Android
 
 ## 7. Tác giả
 
-Nguyễn Minh Vương MSSV: 10123369 Lớp: 12523W.1
-Đào Thị Thanh MSSV: 10123293 Lớp: 12523W.1
+* Nguyễn Minh Vương MSSV: 10123369 Lớp: 12523W.1
+* Đào Thị Thanh MSSV: 10123293 Lớp: 12523W.1
 
 
