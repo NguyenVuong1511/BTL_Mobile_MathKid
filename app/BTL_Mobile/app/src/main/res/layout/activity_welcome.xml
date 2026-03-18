@@ -20,12 +20,13 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="359dp"
-        android:layout_height="304dp"
+        android:layout_width="0dp"
+        android:layout_height="300dp"
         android:src="@drawable/logo"
+        app:layout_constraintWidth_max="360dp"
         app:layout_constraintBottom_toBottomOf="@id/circleBg"
-        app:layout_constraintEnd_toEndOf="@id/circleBg"
-        app:layout_constraintStart_toStartOf="@id/circleBg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/circleBg"/>
 
     <ImageView
@@ -38,14 +39,15 @@
         app:layout_constraintCircleRadius="150dp"
         tools:ignore="MissingConstraints" />
 
+    <!-- Dùng End_toEndOf thay vì marginStart lớn để tránh vỡ layout -->
     <ImageView
         android:id="@+id/icon_pencil"
         android:layout_width="63dp"
         android:layout_height="41dp"
-        android:layout_marginStart="312dp"
         android:layout_marginTop="64dp"
+        android:layout_marginEnd="20dp"
         android:src="@drawable/ic_pencil"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
@@ -58,14 +60,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Dùng Horizontal_bias để căn vị trí linh hoạt -->
     <ImageView
         android:id="@+id/icon_ballon"
         android:layout_width="63dp"
         android:layout_height="77dp"
-        android:layout_marginStart="124dp"
         android:layout_marginTop="4dp"
         android:src="@drawable/ic_ballon"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.35"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
@@ -77,12 +81,13 @@
         android:src="@drawable/ic_book"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/titleWelcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="WELCOME TO MATHKIDS!"
-        android:textSize="34sp"
+        android:textSize="32sp"
         android:textStyle="bold"
         android:textColor="#2E7D32"
         android:fontFamily="@font/concertone_regular"
@@ -95,6 +100,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="30dp"/>
+
     <TextView
         android:id="@+id/subtitle"
         android:layout_width="0dp"
@@ -114,15 +120,14 @@
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="45dp"
         android:layout_marginEnd="40dp"
+        android:layout_marginTop="45dp"
         android:background="@drawable/btn_green"
         android:text="Login"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/subtitle" />
 
@@ -130,16 +135,16 @@
         android:id="@+id/btnRegister"
         android:layout_width="0dp"
         android:layout_height="60dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/btn_orange"
         android:text="Register"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:background="@drawable/btn_orange"
-        app:layout_constraintTop_toBottomOf="@id/btnLogin"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginTop="20dp"/>
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnLogin" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
