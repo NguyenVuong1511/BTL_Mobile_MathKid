@@ -1,7 +1,13 @@
 package com.example.mathkid;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +23,7 @@ import com.example.mathkid.R;
 public class Register extends AppCompatActivity {
 
     ImageView imgFox, imgDog, imgRabbit, imgPanda, imgPig, imgCat;
-    TextView txtSelected;
+    TextView txtSelected, txtLogin;
     EditText edtUsername, edtPassword, edtConfirm;
     Button btnRegister;
 
@@ -42,12 +48,34 @@ public class Register extends AppCompatActivity {
 
 
         txtSelected = findViewById(R.id.txtSelected);
+        txtLogin = findViewById(R.id.txtLogin);
 
         edtUsername = findViewById(R.id.edtUsername);
         edtPassword = findViewById(R.id.edtPassword);
         edtConfirm = findViewById(R.id.edtConfirm);
 
         btnRegister = findViewById(R.id.btnRegister);
+
+        // Đổi màu chỉ chữ "Đăng nhập"
+        if (txtLogin != null) {
+            String fullText = "Bạn đã có tài khoản? Đăng nhập";
+            SpannableString spannableString = new SpannableString(fullText);
+            
+            // Tìm vị trí của "Đăng nhập"
+            int start = fullText.indexOf("Đăng nhập");
+            int end = start + "Đăng nhập".length();
+            
+            if (start != -1) {
+                // Màu xanh lá cây
+                spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#2E7D32")), 
+                        start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                // In đậm (tùy chọn)
+                spannableString.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 
+                        start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            
+            txtLogin.setText(spannableString);
+        }
 
         // ===== CHỌN AVATAR =====
         if (imgFox != null) imgFox.setOnClickListener(v -> selectAvatar("Fox", imgFox));
@@ -62,8 +90,17 @@ public class Register extends AppCompatActivity {
         if (btnRegister != null) {
             btnRegister.setOnClickListener(v -> register());
         }
+
+        // Chuyển sang trang đăng nhập
+        if (txtLogin != null) {
+            txtLogin.setOnClickListener(v -> {
+                Intent intent = new Intent(Register.this, Login.class);
+                startActivity(intent);
+                finish(); // Đóng trang đăng ký
+            });
+        }
         
-        // Nút quay lại (nếu có)
+        // Nút quay lại
         View btnBack = findViewById(R.id.btnBack);
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());

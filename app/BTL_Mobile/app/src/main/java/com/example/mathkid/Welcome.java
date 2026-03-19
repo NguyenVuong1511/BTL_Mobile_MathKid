@@ -1,6 +1,7 @@
 package com.example.mathkid;
 
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -9,6 +10,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -79,5 +81,19 @@ public class Welcome extends AppCompatActivity {
                 11, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         title.setText(text);
+
+        // Xử lý sự kiện nhấn nút Login và Register
+        Button btnLogin = findViewById(R.id.btnLogin);
+        Button btnRegister = findViewById(R.id.btnRegister);
+
+        btnLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(Welcome.this, Login.class);
+            startActivity(intent);
+        });
+
+        btnRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(Welcome.this, Register.class);
+            startActivity(intent);
+        });
     }
 }
