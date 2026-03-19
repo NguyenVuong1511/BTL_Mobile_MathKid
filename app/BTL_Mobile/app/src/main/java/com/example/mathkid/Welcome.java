@@ -40,14 +40,19 @@ public class Welcome extends AppCompatActivity {
         ImageView iconBallon = findViewById(R.id.icon_ballon);
         ImageView iconBook = findViewById(R.id.icon_book);
         ImageView iconPaint = findViewById(R.id.icon_paint);
+
         // Load Animation Floating (Hoạt ảnh bay bồng bềnh)
         Animation animationFloating = AnimationUtils.loadAnimation(this, R.anim.floating);
+        Animation animationSpin = AnimationUtils.loadAnimation(this, R.anim.spin);
+
 
         // Bắt đầu chạy hoạt ảnh cho pencil
         iconPencil.startAnimation(animationFloating);
         iconBook.startAnimation(animationFloating);
         iconBallon.startAnimation(animationFloating);
         iconPaint.startAnimation(animationFloating);
+        iconStar.startAnimation(animationSpin);
+
 
 
         // Tạo animation xoay quanh vòng tròn cho icon_star
