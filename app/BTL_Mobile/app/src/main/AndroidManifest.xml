@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MathKid">
         <activity
-            android:name=".Login"
+            android:name=".Register"
             android:theme="@style/Theme.MathKid.Splash"
             android:exported="true">
             <intent-filter>

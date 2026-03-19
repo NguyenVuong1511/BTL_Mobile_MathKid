@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gardient_register">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- HEADER -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/ic_back"/>
+        </LinearLayout>
+
+        <!-- AVATAR CARD -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Chọn ảnh đại diện của bạn 🐱"
+                    android:textColor="#0D0707"
+                    android:textSize="18sp"/>
+
+                <!-- Avatar list -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imgRabbit"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/avatar_normal"
+                        android:padding="5dp"
+                        android:src="@drawable/rabbit" />
+
+                    <ImageView
+                        android:id="@+id/imgCat"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/avatar_normal"
+                        android:padding="5dp"
+                        android:src="@drawable/cat" />
+
+                    <ImageView
+                        android:id="@+id/imgFox"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/avatar_selected"
+                        android:padding="5dp"
+                        android:src="@drawable/fox" />
+
+                    <ImageView
+                        android:id="@+id/imgDog"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/avatar_normal"
+                        android:padding="5dp"
+                        android:src="@drawable/dog" />
+
+                    <ImageView
+                        android:id="@+id/imgPig"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/avatar_normal"
+                        android:padding="5dp"
+                        android:src="@drawable/pig" />
+
+                    <ImageView
+                        android:id="@+id/imgPanda"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/avatar_normal"
+                        android:padding="5dp"
+                        android:src="@drawable/panda" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txtSelected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Selected: Fox"
+                    android:layout_marginTop="10dp"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- FORM CARD -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- USERNAME -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tên tài khoản"
+                    android:layout_marginBottom="6dp"
+                    android:textColor="#0D0707"/>
+                <EditText
+                    android:id="@+id/edtUsername"
+                    android:hint="Chọn tên người dùng"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_editext"
+                    android:padding="10dp"
+                    android:layout_marginBottom="10dp"/>
+
+                <!-- PASSWORD -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mật khẩu"
+                    android:layout_marginBottom="6dp"
+                    android:textColor="#0D0707"/>
+                <EditText
+                    android:id="@+id/edtPassword"
+                    android:hint="Tạo mật khẩu"
+                    android:inputType="textPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_editext"
+                    android:padding="10dp"/>
+
+                <!-- CONFIRM -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xác nhận mật khẩu"
+                    android:layout_marginBottom="6dp"
+                    android:textColor="#0D0707"/>
+                <EditText
+                    android:id="@+id/edtConfirm"
+                    android:hint="Nhập lại mật khẩu"
+                    android:inputType="textPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_editext"
+                    android:padding="10dp"/>
+
+                <!-- BUTTON -->
+                <Button
+                    android:id="@+id/btnRegister"
+                    android:text="Tạo tài khoản 🎉"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/btn_orange"
+                    android:textColor="#ffffff"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- LOGIN TEXT -->
+        <TextView
+            android:id="@+id/txtLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bạn đã có tài khoản? Đăng nhập"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+</ScrollView>
