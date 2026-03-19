@@ -5,12 +5,12 @@
     android:background="#EEF1EF">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center_horizontal">
         <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@drawable/bg_back"
             android:src="@drawable/ic_back"
             android:padding="8dp"
@@ -48,13 +48,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tên đăng nhập"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp"/>
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nhập tên đăng nhập"
+                android:hint="Nhập tên đăng nhập"
                 android:background="@drawable/bg_editext"
-                android:padding="12dp"/>
+                android:padding="12dp" />
             <!-- Password -->
             <TextView
                 android:text="Mật khẩu"
