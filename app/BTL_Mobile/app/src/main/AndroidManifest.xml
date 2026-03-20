@@ -12,9 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MathKid">
         <activity
+            android:name=".quiz_result"
+            android:exported="false" />
+        <activity
             android:name=".Welcome"
-            android:theme="@style/Theme.MathKid.Splash"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.MathKid.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,8 +32,7 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true"/>
-
+            android:exported="true" />
     </application>
 
 </manifest>
