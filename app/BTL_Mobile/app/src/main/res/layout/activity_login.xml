@@ -1,22 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollViewLogin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EEF1EF">
+    android:background="@drawable/bg_gardient_register_login"
+    android:fillViewport="true">
     <LinearLayout
+        android:id="@+id/mainLayoutLogin"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/bg_back"
-            android:src="@drawable/ic_back"
-            android:padding="8dp"
-            android:layout_gravity="start"
-            android:layout_marginLeft="5dp"/>
+        android:gravity="center_horizontal"
+        android:padding="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+        <!-- HEADER -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/ic_back"/>
+        </LinearLayout>
+
         <ImageView
             android:layout_width="120dp"
             android:layout_height="120dp"
@@ -41,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="22dp"
-            android:background="@drawable/bg_back"
+            android:background="@drawable/bg_form"
             android:elevation="6dp"
             android:padding="20dp">
             <!-- Username -->
@@ -57,7 +69,10 @@
                 android:layout_height="wrap_content"
                 android:hint="Nhập tên đăng nhập"
                 android:background="@drawable/bg_editext"
-                android:padding="12dp" />
+                android:padding="12dp"
+                android:maxLength="12"
+                android:inputType="text"
+                android:maxLines="1" />
             <!-- Password -->
             <TextView
                 android:text="Mật khẩu"
@@ -74,7 +89,8 @@
                 android:padding="12dp"
                 android:layout_marginTop="6dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:maxLines="1" />
 
             <!-- Login Button -->
             <Button
@@ -84,7 +100,9 @@
                 android:textSize="16sp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/bg_button"
-                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:paddingHorizontal="20dp"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"/>
 
         </LinearLayout>
