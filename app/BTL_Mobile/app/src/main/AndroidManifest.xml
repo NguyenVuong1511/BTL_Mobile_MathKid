@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MathKid">
         <activity
+            android:name=".item_level"
+            android:exported="false" />
+        <activity
             android:name=".quiz_result"
             android:exported="false" />
         <activity
