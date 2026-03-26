@@ -12,10 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MathKid">
         <activity
-            android:name=".item_level"
+            android:name=".Item_level"
             android:exported="false" />
         <activity
-            android:name=".quiz_result"
+            android:name=".Quiz_result"
             android:exported="false" />
         <activity
             android:name=".Welcome"

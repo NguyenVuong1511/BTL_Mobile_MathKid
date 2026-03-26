@@ -12,11 +12,22 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 
+import com.example.mathkid.database.SessionManager;
+import com.example.mathkid.database.UserDAO;
+
 public class Login extends AppCompatActivity {
+
+    EditText edtUsername, edtPassword;
+    UserDAO userDAO;
+    SessionManager sessionManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Cần phải gọi installSplashScreen TRƯỚC super.onCreate
@@ -24,6 +35,11 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        userDAO = new UserDAO(this);
+        sessionManager = new SessionManager(this);
+
+        edtUsername = findViewById(R.id.edtUsername);
+        edtPassword = findViewById(R.id.edtPassword);
         Button btnLogin = findViewById(R.id.btnLogin);
         TextView txtRegister = findViewById(R.id.txtRegister);
         View btnBack = findViewById(R.id.btnBack);
@@ -57,9 +73,25 @@ public class Login extends AppCompatActivity {
 
         if (btnLogin != null) {
             btnLogin.setOnClickListener(v -> {
-                Intent intent = new Intent(Login.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                String user = edtUsername.getText().toString().trim();
+                String pass = edtPassword.getText().toString().trim();
+
+                if (user.isEmpty() || pass.isEmpty()) {
+                    Toast.makeText(Login.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                } else {
+                    boolean isValid = userDAO.checkLogin(user, pass);
+                    if (isValid) {
+                        // 1. Lưu phiên đăng nhập
+                        sessionManager.setLogin(true, user);
+
+                        Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(Login.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(Login.this, "Sai tên đăng nhập hoặc mật khẩu", Toast.LENGTH_SHORT).show();
+                    }
+                }
             });
         }
     }

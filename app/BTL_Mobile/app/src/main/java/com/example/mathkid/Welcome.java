@@ -22,12 +22,24 @@ import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.mathkid.database.SessionManager;
+
 public class Welcome extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
+
+        // KIỂM TRA ĐĂNG NHẬP TỰ ĐỘNG
+        SessionManager sessionManager = new SessionManager(this);
+        if (sessionManager.isLoggedIn()) {
+            Intent intent = new Intent(Welcome.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_welcome);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -49,51 +61,56 @@ public class Welcome extends AppCompatActivity {
 
 
         // Bắt đầu chạy hoạt ảnh cho pencil
-        iconPencil.startAnimation(animationFloating);
-        iconBook.startAnimation(animationFloating);
-        iconBallon.startAnimation(animationFloating);
-        iconPaint.startAnimation(animationFloating);
-        iconStar.startAnimation(animationSpin);
+        if (iconPencil != null) iconPencil.startAnimation(animationFloating);
+        if (iconBook != null) iconBook.startAnimation(animationFloating);
+        if (iconBallon != null) iconBallon.startAnimation(animationFloating);
+        if (iconPaint != null) iconPaint.startAnimation(animationFloating);
+        if (iconStar != null) iconStar.startAnimation(animationSpin);
 
 
 
         // Tạo animation xoay quanh vòng tròn cho icon_star
-        ValueAnimator orbitAnimator = ValueAnimator.ofFloat(0f, 360f);
-        orbitAnimator.setDuration(10000); // 10 giây cho một vòng
-        orbitAnimator.setRepeatCount(ValueAnimator.INFINITE);
-        orbitAnimator.setInterpolator(new LinearInterpolator());
-        orbitAnimator.addUpdateListener(animation -> {
-            float angle = (float) animation.getAnimatedValue();
-            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) iconStar.getLayoutParams();
-            layoutParams.circleAngle = angle;
-            iconStar.setLayoutParams(layoutParams);
-        });
-        orbitAnimator.start();
+        if (iconStar != null) {
+            ValueAnimator orbitAnimator = ValueAnimator.ofFloat(0f, 360f);
+            orbitAnimator.setDuration(10000); // 10 giây cho một vòng
+            orbitAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            orbitAnimator.setInterpolator(new LinearInterpolator());
+            orbitAnimator.addUpdateListener(animation -> {
+                float angle = (float) animation.getAnimatedValue();
+                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) iconStar.getLayoutParams();
+                layoutParams.circleAngle = angle;
+                iconStar.setLayoutParams(layoutParams);
+            });
+            orbitAnimator.start();
+        }
 
         TextView title = findViewById(R.id.titleWelcome);
 
-        SpannableString text = new SpannableString("CHÀO MỪNG ĐẾN VỚI MATHKIDS!");
-
-        text.setSpan(new ForegroundColorSpan(Color.parseColor("#4CAF50")),
-                0, 18, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        text.setSpan(new ForegroundColorSpan(Color.parseColor("#FF9800")),
-                18, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        title.setText(text);
+        if (title != null) {
+            SpannableString text = new SpannableString("CHÀO MỪNG ĐẾN VỚI MATHKIDS!");
+            text.setSpan(new ForegroundColorSpan(Color.parseColor("#4CAF50")),
+                    0, 18, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            text.setSpan(new ForegroundColorSpan(Color.parseColor("#FF9800")),
+                    18, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            title.setText(text);
+        }
 
         // Xử lý sự kiện nhấn nút Login và Register
         Button btnLogin = findViewById(R.id.btnLogin);
         Button btnRegister = findViewById(R.id.btnRegister);
 
-        btnLogin.setOnClickListener(v -> {
-            Intent intent = new Intent(Welcome.this, Login.class);
-            startActivity(intent);
-        });
+        if (btnLogin != null) {
+            btnLogin.setOnClickListener(v -> {
+                Intent intent = new Intent(Welcome.this, Login.class);
+                startActivity(intent);
+            });
+        }
 
-        btnRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(Welcome.this, Register.class);
-            startActivity(intent);
-        });
+        if (btnRegister != null) {
+            btnRegister.setOnClickListener(v -> {
+                Intent intent = new Intent(Welcome.this, Register.class);
+                startActivity(intent);
+            });
+        }
     }
 }

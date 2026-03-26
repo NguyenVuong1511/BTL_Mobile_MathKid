@@ -21,7 +21,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 
-import com.example.mathkid.R;
+import com.example.mathkid.database.UserDAO;
 
 public class Register extends AppCompatActivity {
 
@@ -29,6 +29,7 @@ public class Register extends AppCompatActivity {
     TextView txtSelected, txtLogin;
     EditText edtUsername, edtPassword, edtConfirm;
     Button btnRegister;
+    UserDAO userDAO;
 
     String selectedAvatar = "Fox";
 
@@ -40,6 +41,8 @@ public class Register extends AppCompatActivity {
         
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        userDAO = new UserDAO(this);
 
         // Ánh xạ
         imgFox = findViewById(R.id.imgFox);
@@ -153,10 +156,24 @@ public class Register extends AppCompatActivity {
             return;
         }
 
-        // Thành công
-        Toast.makeText(this,
-                "Đăng ký thành công với avatar: " + selectedAvatar,
-                Toast.LENGTH_LONG).show();
+        // Kiểm tra username tồn tại
+        if (userDAO.isUsernameExists(username)) {
+            Toast.makeText(this, "Tên đăng nhập đã tồn tại!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Lưu vào database
+        boolean success = userDAO.registerUser(username, password, selectedAvatar);
+
+        if (success) {
+            Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+            // Chuyển sang màn hình Login
+            Intent intent = new Intent(Register.this, Login.class);
+            startActivity(intent);
+            finish();
+        } else {
+            Toast.makeText(this, "Đăng ký thất bại. Thử lại sau!", Toast.LENGTH_SHORT).show();
+        }
     }
     // Ẩn bàn phím khi chạm ra ngoài EditText
     @Override

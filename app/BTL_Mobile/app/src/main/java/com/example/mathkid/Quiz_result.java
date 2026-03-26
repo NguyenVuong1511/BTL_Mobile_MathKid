@@ -8,7 +8,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class quiz_result extends AppCompatActivity {
+public class Quiz_result extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
