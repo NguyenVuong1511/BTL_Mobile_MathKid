@@ -3,6 +3,9 @@
     <style name="Base.Theme.MathKid" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Font mặc định -->
+        <item name="android:fontFamily">@font/nunito_bold</item>
+        <item name="fontFamily">@font/nunito_bold</item>
     </style>
 
     <style name="Theme.MathKid" parent="Base.Theme.MathKid" />

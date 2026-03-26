@@ -1,6 +1,7 @@
 package com.example.mathkid;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,7 +9,9 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -108,20 +111,25 @@ public class Register extends AppCompatActivity {
     }
 
     private void selectAvatar(String name, ImageView selectedImg) {
-        // Reset background về viền nhạt mặc định cho tất cả
-        if (imgFox != null) imgFox.setBackgroundResource(R.drawable.avatar_normal);
-        if (imgDog != null) imgDog.setBackgroundResource(R.drawable.avatar_normal);
-        if (imgRabbit != null) imgRabbit.setBackgroundResource(R.drawable.avatar_normal);
-        if (imgPanda != null) imgPanda.setBackgroundResource(R.drawable.avatar_normal);
-        if (imgCat != null) imgCat.setBackgroundResource(R.drawable.avatar_normal);
-        if (imgPig != null) imgPig.setBackgroundResource(R.drawable.avatar_normal);
+        // Danh sách tất cả các ImageView avatar
+        ImageView[] avatars = {imgFox, imgDog, imgRabbit, imgPanda, imgCat, imgPig};
 
-        // Set viền cam đậm cho avatar được chọn
+        for (ImageView img : avatars) {
+            if (img != null) {
+                // Reset về trạng thái bình thường
+                img.setBackgroundResource(R.drawable.avatar_normal);
+                img.animate().scaleX(1.0f).scaleY(1.0f).setDuration(200).start();
+            }
+        }
+
+        // Làm nổi bật ảnh được chọn
         selectedImg.setBackgroundResource(R.drawable.avatar_selected);
+        // Phóng to ảnh lên 1.2 lần mượt mà
+        selectedImg.animate().scaleX(1.2f).scaleY(1.2f).setDuration(200).start();
 
         selectedAvatar = name;
         if (txtSelected != null) {
-            txtSelected.setText("Selected: " + name);
+            txtSelected.setText("Đã chọn: " + name);
         }
     }
 
@@ -149,5 +157,20 @@ public class Register extends AppCompatActivity {
         Toast.makeText(this,
                 "Đăng ký thành công với avatar: " + selectedAvatar,
                 Toast.LENGTH_LONG).show();
+    }
+    // Ẩn bàn phím khi chạm ra ngoài EditText
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        View view = getCurrentFocus();
+        if (view != null && (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_MOVE)
+                && view instanceof android.widget.EditText && !view.getClass().getName().startsWith("android.webkit.")) {
+            int[] scrcoords = new int[2];
+            view.getLocationOnScreen(scrcoords);
+            float x = ev.getRawX() + view.getLeft() - scrcoords[0];
+            float y = ev.getRawY() + view.getTop() - scrcoords[1];
+            if (x < view.getLeft() || x > view.getRight() || y < view.getTop() || y > view.getBottom())
+                ((InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

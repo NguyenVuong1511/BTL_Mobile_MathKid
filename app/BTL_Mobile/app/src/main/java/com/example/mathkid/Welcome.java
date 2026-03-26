@@ -72,13 +72,13 @@ public class Welcome extends AppCompatActivity {
 
         TextView title = findViewById(R.id.titleWelcome);
 
-        SpannableString text = new SpannableString("WELCOME TO MATHKIDS!");
+        SpannableString text = new SpannableString("CHÀO MỪNG ĐẾN VỚI MATHKIDS!");
 
         text.setSpan(new ForegroundColorSpan(Color.parseColor("#4CAF50")),
-                0, 11, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                0, 18, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         text.setSpan(new ForegroundColorSpan(Color.parseColor("#FF9800")),
-                11, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                18, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         title.setText(text);
 
