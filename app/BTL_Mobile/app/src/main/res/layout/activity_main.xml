@@ -55,7 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
+                    android:gravity="bottom"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="@id/txtName">
@@ -68,7 +68,7 @@
                         android:paddingVertical="6dp"
                         android:orientation="horizontal"
                         android:gravity="center"
-                        android:layout_marginEnd="12dp">
+                        android:layout_marginEnd="5dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -76,6 +76,7 @@
                             android:textSize="14sp"
                             android:layout_marginEnd="4dp"/>
                         <TextView
+                            android:id="@+id/txtXPBadge"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="350 XP"
@@ -85,8 +86,9 @@
                     </LinearLayout>
 
                     <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:id="@+id/imgAvatar"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
                         android:src="@drawable/fox" />
                 </LinearLayout>
 
@@ -208,7 +210,7 @@
                     android:layout_height="140dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    app:cardBackgroundColor="#4CAF50"
+                    app:cardBackgroundColor="#34D03A"
                     app:cardCornerRadius="20dp">
 
                     <LinearLayout
@@ -238,7 +240,7 @@
                     android:layout_height="140dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    app:cardBackgroundColor="#2196F3"
+                    app:cardBackgroundColor="#34B1FF"
                     app:cardCornerRadius="20dp">
 
                     <LinearLayout
@@ -268,7 +270,7 @@
                     android:layout_height="140dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    app:cardBackgroundColor="#9C27B0"
+                    app:cardBackgroundColor="#E164FA"
                     app:cardCornerRadius="20dp">
 
                     <LinearLayout
@@ -298,7 +300,7 @@
                     android:layout_height="140dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    app:cardBackgroundColor="#FF9800"
+                    app:cardBackgroundColor="#FDA638"
                     app:cardCornerRadius="20dp">
 
                     <LinearLayout
@@ -328,7 +330,7 @@
                     android:layout_height="140dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
-                    app:cardBackgroundColor="#E91E63"
+                    app:cardBackgroundColor="#FF5A92"
                     app:cardCornerRadius="20dp">
 
                     <LinearLayout
@@ -345,37 +347,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:text="Tiến độ của tôi"
-                            android:textColor="#FFFFFF"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- Hồ sơ -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
-                    android:layout_height="140dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
-                    app:cardBackgroundColor="#00BCD4"
-                    app:cardCornerRadius="20dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="👤"
-                            android:textSize="32sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Hồ sơ"
                             android:textColor="#FFFFFF"
                             android:textStyle="bold" />
                     </LinearLayout>

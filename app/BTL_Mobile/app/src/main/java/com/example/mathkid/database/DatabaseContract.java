@@ -6,20 +6,25 @@ public final class DatabaseContract {
 
     private DatabaseContract() {}
 
-    /* Định nghĩa bảng Users */
     public static class UserEntry implements BaseColumns {
         public static final String TABLE_NAME = "users";
         public static final String COLUMN_USERNAME = "username";
         public static final String COLUMN_PASSWORD = "password";
         public static final String COLUMN_AVATAR = "avatar";
+        
+        // Cải tiến mới
+        public static final String COLUMN_LEVEL = "level";
+        public static final String COLUMN_EXP = "exp";
+        public static final String COLUMN_STREAK = "streak";
+        public static final String COLUMN_TOTAL_STARS = "total_stars";
+        public static final String COLUMN_LAST_LOGIN = "last_login_date";
     }
 
-    /* Định nghĩa bảng Scores (Ví dụ bảng mới) */
-    public static class ScoreEntry implements BaseColumns {
-        public static final String TABLE_NAME = "scores";
+    public static class ProgressEntry implements BaseColumns {
+        public static final String TABLE_NAME = "learning_progress";
         public static final String COLUMN_USER_ID = "user_id";
-        public static final String COLUMN_SCORE = "score";
-        public static final String COLUMN_CATEGORY = "category"; // cộng, trừ, nhân, chia
-        public static final String COLUMN_DATE = "timestamp";
+        public static final String COLUMN_CATEGORY = "category"; // Cộng, Trừ, Nhân, Chia
+        public static final String COLUMN_LESSONS_COMPLETED = "lessons_completed";
+        public static final String COLUMN_BEST_SCORE = "best_score";
     }
 }
