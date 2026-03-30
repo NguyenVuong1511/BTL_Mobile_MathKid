@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MathKid">
         <activity
+            android:name=".game_result"
+            android:exported="false" />
+        <activity
             android:name=".Item_level"
             android:exported="false" />
         <activity
