@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="My Achievements 🏆"
+        android:text="Thành tích của tôi 🏆"
         android:textColor="#FFFFFF"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -69,7 +69,7 @@
                 android:id="@+id/tvBadgeLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Badges Earned"
+                android:text="Huy hiệu đã đạt"
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -89,7 +89,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="collected"
+                android:text="đã thu thập"
                 android:textColor="#CCFFFFFF"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -131,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                app:cardBackgroundColor="#E8F5E9"
+                app:cardBackgroundColor="#C8E6C9"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="2dp">
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -158,16 +158,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="Math Beginner"
-                        android:textColor="#4CAF50"
+                        android:text="Mới bắt đầu"
+                        android:textColor="#388E3C"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/img1" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Complete your first lesson"
-                        android:textColor="#666666"
+                        android:text="Hoàn thành bài học đầu tiên"
+                        android:textColor="#555555"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title1" />
@@ -180,7 +180,7 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                app:cardBackgroundColor="#E3F2FD"
+                app:cardBackgroundColor="#BBDEFB"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="2dp">
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -206,16 +206,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="Counting Master"
-                        android:textColor="#2196F3"
+                        android:text="Bậc thầy đếm số"
+                        android:textColor="#1976D2"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/img2" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Count 10 objects correctly"
-                        android:textColor="#666666"
+                        android:text="Đếm đúng 10 vật thể"
+                        android:textColor="#555555"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title2" />
@@ -228,7 +228,7 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                app:cardBackgroundColor="#FFF3E0"
+                app:cardBackgroundColor="#FFE0B2"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="2dp">
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -256,16 +256,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="Addition Star"
-                        android:textColor="#FF9800"
+                        android:text="Ngôi sao phép cộng"
+                        android:textColor="#F57C00"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/img3" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Answer 10 additions"
-                        android:textColor="#666666"
+                        android:text="Trả lời đúng 10 phép cộng"
+                        android:textColor="#555555"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title3" />
@@ -278,7 +278,7 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                app:cardBackgroundColor="#FFEBEE"
+                app:cardBackgroundColor="#FFCDD2"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="2dp">
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -306,16 +306,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="Learning Streak"
-                        android:textColor="#F44336"
+                        android:text="Chuỗi học tập"
+                        android:textColor="#D32F2F"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/img4" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Maintain a 5-day streak"
-                        android:textColor="#666666"
+                        android:text="Duy trì chuỗi học 5 ngày"
+                        android:textColor="#555555"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title4" />
@@ -328,7 +328,7 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                app:cardBackgroundColor="#F5F5F5"
+                app:cardBackgroundColor="#EEEEEE"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="2dp">
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -357,7 +357,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="Problem Solver"
+                        android:text="Người giải đố"
                         android:textColor="#333333"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
@@ -365,7 +365,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Complete first quiz"
+                        android:text="Hoàn thành bài kiểm tra đầu"
                         android:textColor="#888888"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -379,7 +379,7 @@
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
-                app:cardBackgroundColor="#F5F5F5"
+                app:cardBackgroundColor="#EEEEEE"
                 app:cardCornerRadius="24dp"
                 app:cardElevation="2dp">
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -408,7 +408,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="Speed Runner"
+                        android:text="Thử thách tốc độ"
                         android:textColor="#333333"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
@@ -416,7 +416,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Complete quiz under 60s"
+                        android:text="Giải đố dưới 60 giây"
                         android:textColor="#888888"
                         android:textSize="12sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -445,7 +445,7 @@
             android:orientation="vertical"
             android:gravity="center">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🏠" android:textSize="24sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Home" android:textSize="11sp" android:textColor="#888888"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Trang chủ" android:textSize="11sp" android:textColor="#888888"/>
         </LinearLayout>
 
         <LinearLayout
@@ -455,7 +455,7 @@
             android:orientation="vertical"
             android:gravity="center">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📖" android:textSize="24sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Learn" android:textSize="11sp" android:textColor="#888888"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Học tập" android:textSize="11sp" android:textColor="#888888"/>
         </LinearLayout>
 
         <LinearLayout
@@ -465,7 +465,7 @@
             android:orientation="vertical"
             android:gravity="center">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎮" android:textSize="24sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Games" android:textSize="11sp" android:textColor="#888888"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Trò chơi" android:textSize="11sp" android:textColor="#888888"/>
         </LinearLayout>
 
         <LinearLayout
@@ -475,7 +475,7 @@
             android:orientation="vertical"
             android:gravity="center">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👤" android:textSize="24sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Profile" android:textSize="11sp" android:textColor="#FF6D00" android:textStyle="bold"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Hồ sơ" android:textSize="11sp" android:textColor="#FF6D00" android:textStyle="bold"/>
         </LinearLayout>
     </LinearLayout>
 
