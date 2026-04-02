@@ -89,7 +89,9 @@
                         android:id="@+id/imgAvatar"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
-                        android:src="@drawable/fox" />
+                        android:src="@drawable/fox"
+                        android:clickable="true"
+                        android:focusable="true"/>
                 </LinearLayout>
 
                 <TextView
@@ -206,13 +208,16 @@
 
                 <!-- Học Toán -->
                 <FrameLayout
+                    android:id="@+id/btnLearn"
                     android:layout_width="0dp"
                     android:layout_height="140dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
                     android:background="@drawable/bg_soft_button"
                     android:theme="@style/GreenButtonTheme"
-                    android:padding="10dp">
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -241,13 +246,16 @@
 
                 <!-- Luyện tập -->
                 <FrameLayout
+                    android:id="@+id/btnPractice"
                     android:layout_width="0dp"
                     android:layout_height="140dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
                     android:background="@drawable/bg_soft_button"
                     android:theme="@style/BlueButtonTheme"
-                    android:padding="10dp">
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -276,13 +284,16 @@
 
                 <!-- Bài thi -->
                 <FrameLayout
+                    android:id="@+id/btnExam"
                     android:layout_width="0dp"
                     android:layout_height="140dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
                     android:background="@drawable/bg_soft_button"
                     android:theme="@style/RedButtonTheme"
-                    android:padding="10dp">
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -311,13 +322,16 @@
 
                 <!-- Trò chơi Toán học -->
                 <FrameLayout
+                    android:id="@+id/btnGames"
                     android:layout_width="0dp"
                     android:layout_height="140dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
                     android:background="@drawable/bg_soft_button"
                     android:theme="@style/PurpleButtonTheme"
-                    android:padding="10dp">
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -346,13 +360,16 @@
 
                 <!-- Thành tích -->
                 <FrameLayout
+                    android:id="@+id/btnAchievements"
                     android:layout_width="0dp"
                     android:layout_height="140dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
                     android:background="@drawable/bg_soft_button"
                     android:theme="@style/OrangeButtonTheme"
-                    android:padding="10dp">
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -381,13 +398,16 @@
 
                 <!-- Tiến độ của tôi -->
                 <FrameLayout
+                    android:id="@+id/btnProgress"
                     android:layout_width="0dp"
                     android:layout_height="140dp"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
                     android:background="@drawable/bg_soft_button"
                     android:theme="@style/PinkButtonTheme"
-                    android:padding="10dp">
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -397,8 +417,8 @@
                         android:orientation="vertical">
 
                         <ImageView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:src="@drawable/ic_stat"
                             android:layout_marginBottom="8dp"/>
 
@@ -430,16 +450,18 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
+            android:id="@+id/navHome"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🏠"
-                android:textSize="24sp"/>
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/ic_home"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -449,16 +471,18 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/navRanking"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🏆"
-                android:textSize="24sp"/>
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/ic_cup"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -468,16 +492,18 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/navProfile"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="👤"
-                android:textSize="24sp"/>
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/ic_profile"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

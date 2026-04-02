@@ -73,10 +73,10 @@
     </style>
 
     <style name="RedButtonTheme">
-        <item name="shadowDark">#C62828</item>
+        <item name="shadowDark">#BA3A3A</item>
         <item name="shadowLight">#EF9A9A</item>
-        <item name="gradientStart">#EF5350</item>
-        <item name="gradientEnd">#E53935</item>
+        <item name="gradientStart">#E75D5C</item>
+        <item name="gradientEnd">#EB6464</item>
         <item name="innerGradientStart">#E57373</item>
         <item name="innerGradientEnd">#EF9A9A</item>
         <item name="innerStroke">#80FFFFFF</item>
