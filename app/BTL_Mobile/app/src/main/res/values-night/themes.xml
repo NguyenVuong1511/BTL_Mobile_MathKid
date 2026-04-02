@@ -13,4 +13,19 @@
         <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
         <item name="postSplashScreenTheme">@style/Theme.MathKid</item>
     </style>
+    <!-- Theme cho nút xanh -->
+    <style name="GreenButtonTheme">
+        <item name="shadowDark">#3FAF6B</item>
+        <item name="shadowLight">#A8F0C2</item>
+        <item name="gradientStart">#7EE6A1</item>
+        <item name="gradientEnd">#63D48A</item>
+    </style>
+
+    <!-- Theme cho nút xanh dương -->
+    <style name="BlueButtonTheme">
+        <item name="shadowDark">#3F6BAF</item>
+        <item name="shadowLight">#A8C2F0</item>
+        <item name="gradientStart">#7EA1E6</item>
+        <item name="gradientEnd">#638AD4</item>
+    </style>
 </resources>

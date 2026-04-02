@@ -1,0 +1,9 @@
+<resources>
+    <attr name="shadowDark" format="color"/>
+    <attr name="shadowLight" format="color"/>
+    <attr name="gradientStart" format="color"/>
+    <attr name="gradientEnd" format="color"/>
+    <attr name="innerGradientStart" format="color"/>
+    <attr name="innerGradientEnd" format="color"/>
+    <attr name="innerStroke" format="color"/>
+</resources>

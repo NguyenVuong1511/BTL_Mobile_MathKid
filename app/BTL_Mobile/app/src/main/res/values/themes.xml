@@ -6,6 +6,9 @@
         <!-- Font mặc định -->
         <item name="android:fontFamily">@font/nunito_bold</item>
         <item name="fontFamily">@font/nunito_bold</item>
+
+        <!-- Default attributes for buttons if needed -->
+        <item name="innerStroke">#80FFFFFF</item>
     </style>
 
     <style name="Theme.MathKid" parent="Base.Theme.MathKid" />
@@ -18,4 +21,65 @@
         <!-- Theme sau khi splash -->
         <item name="postSplashScreenTheme">@style/Theme.MathKid</item>
     </style>
+
+    <style name="GreenButtonTheme">
+        <item name="shadowDark">#3FAF6B</item>
+        <item name="shadowLight">#A8F0C2</item>
+        <item name="gradientStart">#7EE6A1</item>
+        <item name="gradientEnd">#63D48A</item>
+        <item name="innerGradientStart">#6EDC90</item>
+        <item name="innerGradientEnd">#7FE7A5</item>
+        <item name="innerStroke">#80FFFFFF</item>
+    </style>
+
+    <style name="BlueButtonTheme">
+        <item name="shadowDark">#2A8ECE</item>
+        <item name="shadowLight">#8ED4FF</item>
+        <item name="gradientStart">#5DC3FF</item>
+        <item name="gradientEnd">#34B1FF</item>
+        <item name="innerGradientStart">#4DB9FF</item>
+        <item name="innerGradientEnd">#66C7FF</item>
+        <item name="innerStroke">#80FFFFFF</item>
+    </style>
+
+    <style name="PurpleButtonTheme">
+        <item name="shadowDark">#B450C8</item>
+        <item name="shadowLight">#F0A5FF</item>
+        <item name="gradientStart">#E880FF</item>
+        <item name="gradientEnd">#E164FA</item>
+        <item name="innerGradientStart">#E472FF</item>
+        <item name="innerGradientEnd">#EA8EFF</item>
+        <item name="innerStroke">#80FFFFFF</item>
+    </style>
+
+    <style name="OrangeButtonTheme">
+        <item name="shadowDark">#CA852D</item>
+        <item name="shadowLight">#FFCE8F</item>
+        <item name="gradientStart">#FFB85C</item>
+        <item name="gradientEnd">#FDA638</item>
+        <item name="innerGradientStart">#FFB14D</item>
+        <item name="innerGradientEnd">#FFBF6B</item>
+        <item name="innerStroke">#80FFFFFF</item>
+    </style>
+
+    <style name="PinkButtonTheme">
+        <item name="shadowDark">#CC4875</item>
+        <item name="shadowLight">#FFA1C1</item>
+        <item name="gradientStart">#FF7FA9</item>
+        <item name="gradientEnd">#FF5A92</item>
+        <item name="innerGradientStart">#FF6E9D</item>
+        <item name="innerGradientEnd">#FF8FB5</item>
+        <item name="innerStroke">#80FFFFFF</item>
+    </style>
+
+    <style name="RedButtonTheme">
+        <item name="shadowDark">#C62828</item>
+        <item name="shadowLight">#EF9A9A</item>
+        <item name="gradientStart">#EF5350</item>
+        <item name="gradientEnd">#E53935</item>
+        <item name="innerGradientStart">#E57373</item>
+        <item name="innerGradientEnd">#EF9A9A</item>
+        <item name="innerStroke">#80FFFFFF</item>
+    </style>
+
 </resources>
