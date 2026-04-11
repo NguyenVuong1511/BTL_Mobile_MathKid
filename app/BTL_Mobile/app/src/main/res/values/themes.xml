@@ -82,4 +82,14 @@
         <item name="innerStroke">#80FFFFFF</item>
     </style>
 
+    <style name="GrayButtonTheme">
+        <item name="shadowDark">#9E9E9E</item>
+        <item name="shadowLight">#F5F5F5</item>
+        <item name="gradientStart">#BDBDBD</item>
+        <item name="gradientEnd">#9E9E9E</item>
+        <item name="innerGradientStart">#EEEEEE</item>
+        <item name="innerGradientEnd">#BDBDBD</item>
+        <item name="innerStroke">#80FFFFFF</item>
+    </style>
+
 </resources>

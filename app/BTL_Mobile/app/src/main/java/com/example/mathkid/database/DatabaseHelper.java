@@ -8,7 +8,7 @@ import com.example.mathkid.database.DatabaseContract.*;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "MathKid.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4; // Tăng lên 4 để đảm bảo onUpgrade được gọi
 
     // 1. Table Users
     private static final String SQL_CREATE_USERS =
