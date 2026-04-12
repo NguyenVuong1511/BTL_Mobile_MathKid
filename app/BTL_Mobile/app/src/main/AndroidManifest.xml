@@ -13,22 +13,22 @@
         android:theme="@style/Theme.MathKid">
 
         <activity
-            android:name=".ProfileActivity"
+            android:name=".activities.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".activity_achievements"
+            android:name=".activities.AchievementsActivity"
             android:exported="false" />
         <activity
-            android:name=".game_result"
+            android:name=".activities.GameResultActivity"
             android:exported="false" />
         <activity
-            android:name=".Item_level"
+            android:name=".activities.ItemLevel"
             android:exported="false" />
         <activity
-            android:name=".Quiz_result"
+            android:name=".activities.QuizResult"
             android:exported="false" />
         <activity
-            android:name=".Welcome"
+            android:name=".activities.Welcome"
             android:exported="true"
             android:theme="@style/Theme.MathKid.Splash">
             <intent-filter>
@@ -37,13 +37,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Login"
+            android:name=".activities.Login"
             android:exported="false" />
         <activity
-            android:name=".Register"
+            android:name=".activities.Register"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true" />
     </application>
 

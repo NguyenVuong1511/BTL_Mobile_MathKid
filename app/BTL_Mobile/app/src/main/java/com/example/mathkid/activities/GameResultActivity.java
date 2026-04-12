@@ -1,4 +1,4 @@
-package com.example.mathkid;
+package com.example.mathkid.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class game_result extends AppCompatActivity {
+import com.example.mathkid.R;
+
+public class GameResultActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +27,7 @@ public class game_result extends AppCompatActivity {
 
         Button btnBackHome = findViewById(R.id.btnBackHome);
         btnBackHome.setOnClickListener(v -> {
-            Intent intent = new Intent(game_result.this, MainActivity.class);
+            Intent intent = new Intent(GameResultActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             finish();

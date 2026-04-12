@@ -1,4 +1,4 @@
-package com.example.mathkid;
+package com.example.mathkid.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -21,6 +21,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 
+import com.example.mathkid.R;
 import com.example.mathkid.database.UserDAO;
 
 public class Register extends AppCompatActivity {

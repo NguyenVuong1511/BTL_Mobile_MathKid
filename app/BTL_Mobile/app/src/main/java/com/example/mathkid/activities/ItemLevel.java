@@ -1,4 +1,4 @@
-package com.example.mathkid;
+package com.example.mathkid.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,13 +14,15 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mathkid.database.Lesson;
+import com.example.mathkid.adapter.LessonAdapter;
+import com.example.mathkid.R;
+import com.example.mathkid.model.Lesson;
 import com.example.mathkid.database.SessionManager;
 import com.example.mathkid.database.UserDAO;
 
 import java.util.List;
 
-public class Item_level extends AppCompatActivity {
+public class ItemLevel extends AppCompatActivity {
 
     private RecyclerView recyclerViewLessons;
     private LessonAdapter adapter;

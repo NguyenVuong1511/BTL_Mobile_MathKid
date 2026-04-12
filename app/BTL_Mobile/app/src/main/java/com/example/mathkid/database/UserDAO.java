@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import com.example.mathkid.database.DatabaseContract.*;
+import com.example.mathkid.model.Lesson;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.mathkid;
+package com.example.mathkid.activities;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
@@ -22,6 +22,7 @@ import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.mathkid.R;
 import com.example.mathkid.database.SessionManager;
 
 public class Welcome extends AppCompatActivity {

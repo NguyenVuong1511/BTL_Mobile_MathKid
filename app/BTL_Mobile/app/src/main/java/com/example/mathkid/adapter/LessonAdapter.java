@@ -1,4 +1,4 @@
-package com.example.mathkid;
+package com.example.mathkid.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -15,7 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mathkid.database.Lesson;
+import com.example.mathkid.R;
+import com.example.mathkid.model.Lesson;
 
 import java.util.List;
 

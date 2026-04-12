@@ -1,4 +1,4 @@
-package com.example.mathkid.database;
+package com.example.mathkid.model;
 
 public class Lesson {
     public int id;
