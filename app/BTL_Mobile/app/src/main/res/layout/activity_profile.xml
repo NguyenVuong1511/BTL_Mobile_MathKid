@@ -10,7 +10,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:clipToPadding="false"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/bottomNavContainer">
@@ -42,7 +42,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <!-- AVATAR WITH SOFT BORDER -->
+                <!-- AVATAR WITH SOFT BORDER & EDIT ICON -->
                 <FrameLayout
                     android:id="@+id/avatarContainer"
                     android:layout_width="140dp"
@@ -67,6 +67,28 @@
                             android:padding="12dp"
                             android:scaleType="centerInside"
                             android:src="@drawable/fox" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/btnEditAvatar"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="bottom|end"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/bg_soft_button"
+                        android:theme="@style/OrangeButtonTheme"
+                        android:padding="4dp">
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_soft_inner">
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_pencil"
+                                app:tint="#FFFFFF" />
+                        </FrameLayout>
                     </FrameLayout>
                 </FrameLayout>
 
@@ -164,111 +186,164 @@
                 </FrameLayout>
             </LinearLayout>
 
-            <!-- ACHIEVEMENTS SECTION -->
+            <!-- LEVEL PROGRESS SECTION -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_soft_button"
+                android:theme="@style/GreenButtonTheme"
+                android:padding="6dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_soft_inner"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Tiến trình cấp độ"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:textSize="16sp"/>
+                        <TextView
+                            android:id="@+id/txtProgressValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="450/1000 XP"
+                            android:textColor="#FFFFFF"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+                    <ProgressBar
+                        android:id="@+id/progressLevel"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="12dp"
+                        android:layout_marginTop="12dp"
+                        android:progress="45"
+                        android:progressDrawable="@drawable/bg_xp_card" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- ACHIEVEMENTS SECTION (DYNAMIC) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="32dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Thành tích của bé 🏆"
+                    android:textColor="#333333"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/btnViewAllAchievements"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tất cả"
+                    android:textColor="#4CAF50"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:padding="8dp"
+                    android:clickable="true"
+                    android:focusable="true" />
+            </LinearLayout>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:layout_marginTop="12dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:clipToPadding="false">
+                <LinearLayout
+                    android:id="@+id/layoutAchievements"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <!-- Sẽ được thêm code động từ Activity -->
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- SETTINGS SECTION -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="32dp"
-                android:text="Thành tích đạt được 🥇"
+                android:text="Cài đặt tài khoản ⚙️"
                 android:textColor="#333333"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <androidx.cardview.widget.CardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="#FFFFFF">
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:layout_marginTop="12dp">
 
-                <LinearLayout
+                <FrameLayout
+                    android:id="@+id/btnEditInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <!-- Mẫu một thành tích -->
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_soft_button"
+                    android:theme="@style/GrayButtonTheme"
+                    android:padding="4dp"
+                    android:clickable="true"
+                    android:focusable="true">
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_soft_inner"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingVertical="8dp">
-                        <ImageView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:src="@drawable/ic_trophy" />
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Nhà toán học nhí"
-                                android:textColor="#333333"
-                                android:textStyle="bold"
-                                android:textSize="15sp"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Hoàn thành 10 bài học đầu tiên"
-                                android:textColor="#888888"
-                                android:textSize="12sp"/>
-                        </LinearLayout>
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_check"
-                            app:tint="#4CAF50"/>
+                        android:padding="14dp"
+                        android:orientation="horizontal">
+                        <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_profile" app:tint="#333333"/>
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="14dp" android:text="Chỉnh sửa thông tin" android:textColor="#333333" android:textStyle="bold" android:textSize="15sp"/>
+                        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_back" android:rotation="180" app:tint="#999999"/>
                     </LinearLayout>
+                </FrameLayout>
 
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F0F0" android:layout_marginVertical="8dp"/>
-
+                <FrameLayout
+                    android:id="@+id/btnSecurity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_soft_button"
+                    android:theme="@style/GrayButtonTheme"
+                    android:padding="4dp"
+                    android:clickable="true"
+                    android:focusable="true">
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_soft_inner"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingVertical="8dp">
-                        <ImageView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:src="@drawable/ic_star" />
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Chuyên gia tích lũy"
-                                android:textColor="#333333"
-                                android:textStyle="bold"
-                                android:textSize="15sp"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Đạt được 1000 XP"
-                                android:textColor="#888888"
-                                android:textSize="12sp"/>
-                        </LinearLayout>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="75%"
-                            android:textColor="#FF9800"
-                            android:textStyle="bold"
-                            android:textSize="12sp"/>
+                        android:padding="14dp"
+                        android:orientation="horizontal">
+                        <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_lock" app:tint="#333333"/>
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="14dp" android:text="Bảo mật &amp; Mật khẩu" android:textColor="#333333" android:textStyle="bold" android:textSize="15sp"/>
+                        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_back" android:rotation="180" app:tint="#999999"/>
                     </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                </FrameLayout>
+
+            </LinearLayout>
 
             <!-- LOGOUT BUTTON WITH SOFT STYLE -->
             <FrameLayout
@@ -333,7 +408,9 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
                     <ImageView android:layout_width="26dp" android:layout_height="26dp" android:src="@drawable/ic_home" app:tint="#383838"/>
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Trang chủ" android:textSize="10sp" android:textColor="#000000" android:textStyle="bold"/>
                 </LinearLayout>
@@ -344,7 +421,9 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
                     <ImageView android:layout_width="26dp" android:layout_height="26dp" android:src="@drawable/ic_cup" app:tint="#383838"/>
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Xếp hạng" android:textSize="10sp" android:textColor="#000000" android:textStyle="bold"/>
                 </LinearLayout>
@@ -355,7 +434,9 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
                     <ImageView android:layout_width="26dp" android:layout_height="26dp" android:src="@drawable/ic_profile" app:tint="#4CAF50"/>
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Hồ sơ" android:textSize="10sp" android:textColor="#4CAF50" android:textStyle="bold"/>
                 </LinearLayout>
