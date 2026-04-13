@@ -95,6 +95,7 @@
         android:layout_height="90dp"
         android:paddingHorizontal="16dp"
         android:paddingBottom="10dp"
+        android:theme="@style/GrayButtonTheme"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent">
 

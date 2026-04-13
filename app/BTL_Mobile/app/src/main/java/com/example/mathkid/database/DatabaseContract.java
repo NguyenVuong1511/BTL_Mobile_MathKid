@@ -19,6 +19,24 @@ public final class DatabaseContract {
         public static final String COLUMN_LAST_LOGIN = "last_login_date";
     }
 
+    // Bảng định nghĩa các loại thành tích có trong ứng dụng
+    public static class AchievementEntry implements BaseColumns {
+        public static final String TABLE_NAME = "achievements";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_DESCRIPTION = "description";
+        public static final String COLUMN_ICON = "icon";
+        public static final String COLUMN_TYPE = "type"; // Ví dụ: 'lesson_count', 'xp_milestone', 'streak'
+        public static final String COLUMN_REQUIRED_VALUE = "required_value"; // Giá trị cần đạt
+    }
+
+    // Bảng lưu trữ những thành tích mà người dùng cụ thể đã đạt được
+    public static class UserAchievementEntry implements BaseColumns {
+        public static final String TABLE_NAME = "user_achievements";
+        public static final String COLUMN_USER_ID = "user_id";
+        public static final String COLUMN_ACHIEVEMENT_ID = "achievement_id";
+        public static final String COLUMN_EARNED_DATE = "earned_date";
+    }
+
     public static class LevelEntry implements BaseColumns {
         public static final String TABLE_NAME = "levels";
         public static final String COLUMN_LEVEL = "level";
@@ -71,5 +89,4 @@ public final class DatabaseContract {
         public static final String COLUMN_BEST_SCORE = "best_score";
         public static final String COLUMN_LAST_PLAYED = "last_played";
     }
-
 }

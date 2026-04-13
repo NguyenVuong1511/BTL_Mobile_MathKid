@@ -5,478 +5,382 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="#F8FAFB"
     tools:context=".activities.AchievementsActivity">
 
-    <!-- Header Gradient Background -->
-    <View
-        android:id="@+id/headerBackground"
+    <!-- Header Section -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="150dp"
         android:background="@drawable/bg_orange_gradient"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/btnBack"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="48dp"
-        app:cardBackgroundColor="#4DFFFFFF"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="0dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="40dp"
         app:layout_constraintTop_toTopOf="parent">
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_back"
-            app:tint="#FFFFFF" />
-    </androidx.cardview.widget.CardView>
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Thành tích của tôi 🏆"
-        android:textColor="#FFFFFF"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/btnBack"
-        app:layout_constraintStart_toEndOf="@id/btnBack"
-        app:layout_constraintTop_toTopOf="@id/btnBack" />
+        <FrameLayout
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_soft_button"
+            android:padding="4dp"
+            android:theme="@style/OrangeButtonTheme"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_soft_inner">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_back"
+                    app:tint="#FFFFFF" />
+            </FrameLayout>
+        </FrameLayout>
 
-    <!-- Badges Earned Card -->
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thành Tích Của Bé 🏆"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/btnBack"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btnBack" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Thẻ tiến trình -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardProgress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="24dp"
-        app:cardBackgroundColor="#33FFFFFF"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="0dp"
-        app:layout_constraintTop_toBottomOf="@id/btnBack">
+        android:layout_marginTop="-30dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="6dp"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:background="#FFFFFF"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <TextView
-                android:id="@+id/tvBadgeLabel"
+                android:id="@+id/txtBadgeProgress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Huy hiệu đã đạt"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tvBadgeCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="4/8"
-                android:textColor="#FFEB3B"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="đã thu thập"
-                android:textColor="#CCFFFFFF"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvBadgeCount" />
+                android:text="Bé đã sưu tập 6 / 12 huy hiệu"
+                android:textColor="#333333"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <ProgressBar
-                android:id="@+id/progressBar"
+                android:id="@+id/achievementProgress"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="8dp"
-                android:layout_marginTop="12dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="10dp"
                 android:progress="50"
-                android:progressDrawable="@android:drawable/progress_horizontal"
-                app:layout_constraintTop_toBottomOf="@id/tvBadgeLabel" />
+                android:progressDrawable="@drawable/bg_xp_card" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Cố lên bé ơi! Sắp nhận quà rồi! 🎁"
+                android:textColor="#FF9800"
+                android:textSize="12sp"
+                android:textStyle="italic" />
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Achievement Grid -->
-    <ScrollView
+    <!-- Achievement Grid - 1 hàng 3 cột -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:clipToPadding="false"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="80dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav"
-        app:layout_constraintTop_toBottomOf="@id/headerBackground">
+        android:paddingHorizontal="10dp"
+        android:paddingBottom="100dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavContainer"
+        app:layout_constraintTop_toBottomOf="@id/cardProgress">
 
         <GridLayout
+            android:id="@+id/achievementGrid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="2"
+            android:alignmentMode="alignMargins"
+            android:columnCount="3"
             android:useDefaultMargins="true">
 
-            <!-- Math Beginner -->
-            <androidx.cardview.widget.CardView
+            <!-- 1. Tân Binh -->
+            <FrameLayout
+                android:id="@+id/achievement1"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="165dp"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="#C8E6C9"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="2dp">
-                <androidx.constraintlayout.widget.ConstraintLayout
+                android:background="@drawable/bg_soft_button"
+                android:theme="@style/GreenButtonTheme"
+                android:padding="4dp">
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-                    <ImageView
-                        android:id="@+id/icCheck1"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_check"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="#4CAF50" />
-                    <ImageView
-                        android:id="@+id/img1"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/ic_star"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    <TextView
-                        android:id="@+id/title1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="Mới bắt đầu"
-                        android:textColor="#388E3C"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/img1" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Hoàn thành bài học đầu tiên"
-                        android:textColor="#555555"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title1" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_soft_inner"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:orientation="vertical">
+                    <ImageView android:layout_width="38dp" android:layout_height="38dp" android:src="@drawable/ic_star" app:tint="#FFFFFF" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Tân Binh" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="12sp" android:gravity="center" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Hoàn thành bài tập đầu tiên" android:textColor="#E0F2F1" android:textSize="9sp" android:gravity="center" />
+                </LinearLayout>
+            </FrameLayout>
 
-            <!-- Counting Master -->
-            <androidx.cardview.widget.CardView
+            <!-- 2. Siêu Tốc -->
+            <FrameLayout
+                android:id="@+id/achievement2"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="165dp"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="#BBDEFB"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="2dp">
-                <androidx.constraintlayout.widget.ConstraintLayout
+                android:background="@drawable/bg_soft_button"
+                android:theme="@style/BlueButtonTheme"
+                android:padding="4dp">
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_check"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="#2196F3" />
-                    <ImageView
-                        android:id="@+id/img2"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/ic_book"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    <TextView
-                        android:id="@+id/title2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="Bậc thầy đếm số"
-                        android:textColor="#1976D2"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/img2" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Đếm đúng 10 vật thể"
-                        android:textColor="#555555"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title2" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_soft_inner"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:orientation="vertical">
+                    <ImageView android:layout_width="38dp" android:layout_height="38dp" android:src="@drawable/ic_trophy" app:tint="#FFFFFF" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Siêu Tốc" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="12sp" android:gravity="center" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Giải bài toán dưới 30 giây" android:textColor="#E3F2FD" android:textSize="9sp" android:gravity="center" />
+                </LinearLayout>
+            </FrameLayout>
 
-            <!-- Addition Star -->
-            <androidx.cardview.widget.CardView
+            <!-- 3. Gấu Trúc -->
+            <FrameLayout
+                android:id="@+id/achievement3"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="165dp"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="#FFE0B2"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="2dp">
-                <androidx.constraintlayout.widget.ConstraintLayout
+                android:background="@drawable/bg_soft_button"
+                android:theme="@style/OrangeButtonTheme"
+                android:padding="4dp">
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_check"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="#FF9800" />
-                    <TextView
-                        android:id="@+id/img3"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:text="➕"
-                        android:textSize="24sp"
-                        android:gravity="center"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    <TextView
-                        android:id="@+id/title3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="Ngôi sao phép cộng"
-                        android:textColor="#F57C00"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/img3" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Trả lời đúng 10 phép cộng"
-                        android:textColor="#555555"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title3" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_soft_inner"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:orientation="vertical">
+                    <ImageView android:layout_width="42dp" android:layout_height="42dp" android:src="@drawable/panda" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Gấu Trúc" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="12sp" android:gravity="center" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Đạt được 100 điểm đầu" android:textColor="#FFF3E0" android:textSize="9sp" android:gravity="center" />
+                </LinearLayout>
+            </FrameLayout>
 
-            <!-- Learning Streak -->
-            <androidx.cardview.widget.CardView
+            <!-- 4. Thỏ Con -->
+            <FrameLayout
+                android:id="@+id/achievement4"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="165dp"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="#FFCDD2"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="2dp">
-                <androidx.constraintlayout.widget.ConstraintLayout
+                android:background="@drawable/bg_soft_button"
+                android:theme="@style/PinkButtonTheme"
+                android:padding="4dp">
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_check"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="#F44336" />
-                    <TextView
-                        android:id="@+id/img4"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:text="🔥"
-                        android:textSize="24sp"
-                        android:gravity="center"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    <TextView
-                        android:id="@+id/title4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="Chuỗi học tập"
-                        android:textColor="#D32F2F"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/img4" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Duy trì chuỗi học 5 ngày"
-                        android:textColor="#555555"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title4" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_soft_inner"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:orientation="vertical">
+                    <ImageView android:layout_width="42dp" android:layout_height="42dp" android:src="@drawable/rabbit" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Thỏ Con" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="12sp" android:gravity="center" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Học liên tiếp trong 3 ngày" android:textColor="#FCE4EC" android:textSize="9sp" android:gravity="center" />
+                </LinearLayout>
+            </FrameLayout>
 
-            <!-- Problem Solver (Locked) -->
-            <androidx.cardview.widget.CardView
+            <!-- 5. Thông Thái -->
+            <FrameLayout
+                android:id="@+id/achievement5"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="165dp"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="#EEEEEE"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="2dp">
-                <androidx.constraintlayout.widget.ConstraintLayout
+                android:background="@drawable/bg_soft_button"
+                android:theme="@style/PurpleButtonTheme"
+                android:padding="4dp">
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:alpha="0.6">
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@android:drawable/ic_lock_idle_lock"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="#9E9E9E" />
-                    <TextView
-                        android:id="@+id/img5"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:text="🧩"
-                        android:textSize="24sp"
-                        android:gravity="center"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    <TextView
-                        android:id="@+id/title5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="Người giải đố"
-                        android:textColor="#333333"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/img5" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Hoàn thành bài kiểm tra đầu"
-                        android:textColor="#888888"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title5" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_soft_inner"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:orientation="vertical">
+                    <ImageView android:layout_width="38dp" android:layout_height="38dp" android:src="@drawable/ic_cup" app:tint="#FFFFFF" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Thông Thái" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="12sp" android:gravity="center" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Đạt 5 bài tập điểm 10" android:textColor="#F3E5F5" android:textSize="9sp" android:gravity="center" />
+                </LinearLayout>
+            </FrameLayout>
 
-            <!-- Speed Runner (Locked) -->
-            <androidx.cardview.widget.CardView
+            <!-- 6. Chăm Chỉ -->
+            <FrameLayout
+                android:id="@+id/achievement6"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="165dp"
                 android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="#EEEEEE"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="2dp">
-                <androidx.constraintlayout.widget.ConstraintLayout
+                android:background="@drawable/bg_soft_button"
+                android:theme="@style/GreenButtonTheme"
+                android:padding="4dp">
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:alpha="0.6">
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@android:drawable/ic_lock_idle_lock"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="#9E9E9E" />
-                    <TextView
-                        android:id="@+id/img6"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:text="🚀"
-                        android:textSize="24sp"
-                        android:gravity="center"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    <TextView
-                        android:id="@+id/title6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="Thử thách tốc độ"
-                        android:textColor="#333333"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/img6" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Giải đố dưới 60 giây"
-                        android:textColor="#888888"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title6" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_soft_inner"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:orientation="vertical">
+                    <ImageView android:layout_width="38dp" android:layout_height="38dp" android:src="@drawable/ic_book" app:tint="#FFFFFF" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Chăm Chỉ" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="12sp" android:gravity="center" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Hoàn thành 10 bài tập" android:textColor="#E0F2F1" android:textSize="9sp" android:gravity="center" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- 7. Vô Địch (Locked) -->
+            <FrameLayout
+                android:id="@+id/achievement7"
+                android:layout_width="0dp"
+                android:layout_height="165dp"
+                android:layout_columnWeight="1"
+                android:background="@drawable/bg_soft_button"
+                android:theme="@style/GrayButtonTheme"
+                android:padding="4dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_soft_inner"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:orientation="vertical">
+                    <ImageView android:id="@+id/imgBadge7" android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_lock" app:tint="#9E9E9E" />
+                    <TextView android:id="@+id/txtBadgeTitle7" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Vô Địch" android:textColor="#9E9E9E" android:textStyle="bold" android:textSize="12sp" android:gravity="center" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Đạt hạng 1 bảng xếp hạng" android:textColor="#BDBDBD" android:textSize="9sp" android:gravity="center" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- 8. Kiên Trì (Locked) -->
+            <FrameLayout
+                android:id="@+id/achievement8"
+                android:layout_width="0dp"
+                android:layout_height="165dp"
+                android:layout_columnWeight="1"
+                android:background="@drawable/bg_soft_button"
+                android:theme="@style/GrayButtonTheme"
+                android:padding="4dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_soft_inner"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:orientation="vertical">
+                    <ImageView android:id="@+id/imgBadge8" android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_lock" app:tint="#9E9E9E" />
+                    <TextView android:id="@+id/txtBadgeTitle8" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Kiên Trì" android:textColor="#9E9E9E" android:textStyle="bold" android:textSize="12sp" android:gravity="center" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Học bài trong 7 ngày liền" android:textColor="#BDBDBD" android:textSize="9sp" android:gravity="center" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- 9. Sáng Tạo (Locked) -->
+            <FrameLayout
+                android:id="@+id/achievement9"
+                android:layout_width="0dp"
+                android:layout_height="165dp"
+                android:layout_columnWeight="1"
+                android:background="@drawable/bg_soft_button"
+                android:theme="@style/GrayButtonTheme"
+                android:padding="4dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_soft_inner"
+                    android:gravity="center"
+                    android:padding="6dp"
+                    android:orientation="vertical">
+                    <ImageView android:id="@+id/imgBadge9" android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_lock" app:tint="#9E9E9E" />
+                    <TextView android:id="@+id/txtBadgeTitle9" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Sáng Tạo" android:textColor="#9E9E9E" android:textStyle="bold" android:textSize="12sp" android:gravity="center" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Hoàn thành 5 tranh tô màu" android:textColor="#BDBDBD" android:textSize="9sp" android:gravity="center" />
+                </LinearLayout>
+            </FrameLayout>
 
         </GridLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <!-- Bottom Navigation Mockup -->
-    <LinearLayout
-        android:id="@+id/bottomNav"
+    <!-- Bottom Navigation Bar -->
+    <FrameLayout
+        android:id="@+id/bottomNavContainer"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:background="#FFFFFF"
-        android:elevation="16dp"
-        android:orientation="horizontal"
-        android:gravity="center"
+        android:layout_height="80dp"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🏠" android:textSize="24sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Trang chủ" android:textSize="11sp" android:textColor="#888888"/>
-        </LinearLayout>
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bg_soft_button"
+            android:padding="4dp"
+            android:theme="@style/GrayButtonTheme">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📖" android:textSize="24sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Học tập" android:textSize="11sp" android:textColor="#888888"/>
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_soft_inner"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎮" android:textSize="24sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Trò chơi" android:textSize="11sp" android:textColor="#888888"/>
-        </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/navHome"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_home" app:tint="#424242" />
+                </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👤" android:textSize="24sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Hồ sơ" android:textSize="11sp" android:textColor="#FF6D00" android:textStyle="bold"/>
+                <LinearLayout
+                    android:id="@+id/navRanking"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_cup" app:tint="#424242" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/navProfile"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_profile" app:tint="#424242" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
