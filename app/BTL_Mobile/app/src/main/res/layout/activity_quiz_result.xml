@@ -84,6 +84,7 @@
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"/>
             <TextView
+                android:id="@+id/txtXPEarned"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+50 ĐIỂM THƯỞNG ⚡"
@@ -120,6 +121,7 @@
                 android:orientation="vertical"
                 android:gravity="center">
                 <TextView
+                    android:id="@+id/txtResultStars"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="3/3"
@@ -151,6 +153,7 @@
                 android:orientation="vertical"
                 android:gravity="center">
                 <TextView
+                    android:id="@+id/txtResultCorrect"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="5"
@@ -182,6 +185,7 @@
                 android:orientation="vertical"
                 android:gravity="center">
                 <TextView
+                    android:id="@+id/txtResultStreak"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="5 🔥"

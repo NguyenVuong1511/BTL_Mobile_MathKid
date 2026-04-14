@@ -136,14 +136,16 @@ public class MainActivity extends AppCompatActivity {
 
         if (data != null) {
             txtName.setText(data.username);
-            txtLevelProgress.setText("Tiến độ Cấp " + data.level);
-
-            // Logic tính toán XP (ví dụ: mỗi 100 XP lên 1 level)
-            int xpInCurrentLevel = data.exp % 100;
-            int maxXPPerLevel = 100;
             
-            txtXPValue.setText(xpInCurrentLevel + "/" + maxXPPerLevel + " XP");
-            progressBar.setMax(maxXPPerLevel);
+            // Logic tính toán Level và XP
+            // Mỗi 500 XP lên 1 level
+            int xpPerLevel = 500;
+            int currentLevel = (data.exp / xpPerLevel) + 1;
+            int xpInCurrentLevel = data.exp % xpPerLevel;
+            
+            txtLevelProgress.setText("Tiến độ Cấp " + currentLevel);
+            txtXPValue.setText(xpInCurrentLevel + "/" + xpPerLevel + " XP");
+            progressBar.setMax(xpPerLevel);
             progressBar.setProgress(xpInCurrentLevel);
 
             if (txtXPBadge != null) {
@@ -159,6 +161,9 @@ public class MainActivity extends AppCompatActivity {
                     imgAvatar.setImageResource(resId);
                 }
             }
+            
+            // Cập nhật level vào DB nếu có sự thay đổi (tùy chọn)
+            // if (currentLevel != data.level) { ... update level in db ... }
         }
     }
 

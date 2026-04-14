@@ -2,9 +2,9 @@ package com.example.mathkid.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -13,11 +13,11 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.mathkid.activities.MainActivity;
 import com.example.mathkid.R;
 import com.example.mathkid.database.SessionManager;
 import com.example.mathkid.database.UserDAO;
@@ -33,9 +33,11 @@ public class AchievementsActivity extends AppCompatActivity {
     private LinearLayout navHome, navRanking, navProfile;
     
     // Mảng chứa các FrameLayout của huy hiệu để dễ quản lý
-    private FrameLayout[] achievementContainers = new FrameLayout[6];
-    private ImageView[] badgeImages = new ImageView[6];
-    private TextView[] badgeTitles = new TextView[6];
+    private FrameLayout[] achievementContainers = new FrameLayout[9];
+    private ImageView[] badgeImages = new ImageView[9];
+    private TextView[] badgeTitles = new TextView[9];
+    private TextView[] badgeDescs = new TextView[9];
+    private LinearLayout[] innerLayouts = new LinearLayout[9];
 
     private UserDAO userDAO;
     private SessionManager sessionManager;
@@ -69,15 +71,16 @@ public class AchievementsActivity extends AppCompatActivity {
         navRanking = findViewById(R.id.navRanking);
         navProfile = findViewById(R.id.navProfile);
 
-        // Ánh xạ 6 ô huy hiệu từ XML
-        for (int i = 0; i < 6; i++) {
+        // Ánh xạ tối đa 9 ô huy hiệu từ XML
+        for (int i = 0; i < 9; i++) {
             int containerId = getResources().getIdentifier("achievement" + (i + 1), "id", getPackageName());
-            int imageId = getResources().getIdentifier("imgBadge" + (i + 1), "id", getPackageName());
-            int titleId = getResources().getIdentifier("txtBadgeTitle" + (i + 1), "id", getPackageName());
-            
-            achievementContainers[i] = findViewById(containerId);
-            badgeImages[i] = findViewById(imageId);
-            badgeTitles[i] = findViewById(titleId);
+            if (containerId != 0) {
+                achievementContainers[i] = findViewById(containerId);
+                innerLayouts[i] = (LinearLayout) achievementContainers[i].getChildAt(0);
+                badgeImages[i] = (ImageView) innerLayouts[i].getChildAt(0);
+                badgeTitles[i] = (TextView) innerLayouts[i].getChildAt(1);
+                badgeDescs[i] = (TextView) innerLayouts[i].getChildAt(2);
+            }
         }
     }
 
@@ -108,25 +111,49 @@ public class AchievementsActivity extends AppCompatActivity {
             List<Achievement> achievements = userDAO.getAchievements(userData.id);
             int earnedCount = 0;
 
-            for (int i = 0; i < achievements.size() && i < 6; i++) {
+            // Ẩn tất cả trước
+            for (int i = 0; i < 9; i++) {
+                if (achievementContainers[i] != null) achievementContainers[i].setVisibility(View.GONE);
+            }
+
+            for (int i = 0; i < achievements.size() && i < 9; i++) {
                 Achievement a = achievements.get(i);
-                
-                // Cập nhật giao diện dựa trên trạng thái đã đạt được hay chưa
+                if (achievementContainers[i] == null) continue;
+
+                achievementContainers[i].setVisibility(View.VISIBLE);
+                badgeTitles[i].setText(a.title);
+                badgeDescs[i].setText(a.description);
+
                 if (a.isUnlocked) {
                     earnedCount++;
-                    achievementContainers[i].setAlpha(1.0f);
-                    // Nếu huy hiệu đã mở, giữ nguyên theme màu sắc
+                    applyThemeToAchievement(i, R.style.OrangeButtonTheme, false);
+                    
+                    // Set icon thành tích (nếu có trong drawable)
+                    int iconRes = getResources().getIdentifier(a.icon, "drawable", getPackageName());
+                    if (iconRes != 0) {
+                        badgeImages[i].setImageResource(iconRes);
+                        badgeImages[i].setColorFilter(null);
+                    }
                 } else {
-                    // Nếu chưa mở, làm mờ và hiển thị icon khóa (logic này bạn có thể tùy biến thêm)
-                    achievementContainers[i].setAlpha(0.5f);
+                    applyThemeToAchievement(i, R.style.GrayButtonTheme, true);
+                    badgeImages[i].setImageResource(R.drawable.ic_lock);
+                    badgeImages[i].setColorFilter(android.graphics.Color.parseColor("#9E9E9E"));
                 }
-                
-                if (badgeTitles[i] != null) badgeTitles[i].setText(a.title);
             }
 
             txtBadgeProgress.setText("Bé đã đạt " + earnedCount + " / " + achievements.size() + " huy hiệu");
             achievementProgress.setMax(achievements.size());
             achievementProgress.setProgress(earnedCount);
         }
+    }
+
+    private void applyThemeToAchievement(int index, int themeResId, boolean isLocked) {
+        ContextThemeWrapper wrapper = new ContextThemeWrapper(this, themeResId);
+        achievementContainers[index].setBackground(AppCompatResources.getDrawable(wrapper, R.drawable.bg_soft_button));
+        innerLayouts[index].setBackground(AppCompatResources.getDrawable(wrapper, R.drawable.bg_soft_inner));
+        
+        int textColor = isLocked ? android.graphics.Color.parseColor("#9E9E9E") : android.graphics.Color.WHITE;
+        badgeTitles[index].setTextColor(textColor);
+        badgeDescs[index].setTextColor(isLocked ? android.graphics.Color.parseColor("#BDBDBD") : android.graphics.Color.parseColor("#E0E0E0"));
     }
 }

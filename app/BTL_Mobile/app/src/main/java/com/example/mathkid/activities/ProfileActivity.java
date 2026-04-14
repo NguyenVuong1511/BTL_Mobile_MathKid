@@ -114,14 +114,17 @@ public class ProfileActivity extends AppCompatActivity {
         if (data != null) {
             txtProfileName.setText(data.username);
             txtProfileXP.setText(String.valueOf(data.exp));
-            txtProfileLevel.setText(String.valueOf(data.level));
             txtProfileStreak.setText(String.valueOf(data.streak));
 
-            // Tiến trình cấp độ
-            int nextLevelXP = 1000;
-            int currentXP = data.exp % nextLevelXP;
-            txtProgressValue.setText(currentXP + " / " + nextLevelXP + " XP");
-            progressLevel.setProgress((currentXP * 100) / nextLevelXP);
+            // Đồng bộ logic tính toán Level và XP với MainActivity
+            int xpPerLevel = 500;
+            int currentLevel = (data.exp / xpPerLevel) + 1;
+            int xpInCurrentLevel = data.exp % xpPerLevel;
+            
+            txtProfileLevel.setText(String.valueOf(currentLevel));
+            txtProgressValue.setText(xpInCurrentLevel + " / " + xpPerLevel + " XP");
+            progressLevel.setMax(xpPerLevel);
+            progressLevel.setProgress(xpInCurrentLevel);
 
             if (data.avatar != null && !data.avatar.isEmpty()) {
                 int resId = getResources().getIdentifier(data.avatar.toLowerCase(), "drawable", getPackageName());
@@ -157,15 +160,8 @@ public class ProfileActivity extends AppCompatActivity {
         frame.setLayoutParams(params);
         frame.setPadding(dpToPx(4), dpToPx(4), dpToPx(4), dpToPx(4));
         
-        // Set theme/màu dựa trên trạng thái mở khóa
-        if (ach.isUnlocked) {
-            frame.setBackgroundResource(R.drawable.bg_soft_button);
-            // Chọn màu ngẫu nhiên hoặc theo loại (ví dụ dùng theme Orange)
-            frame.setContextClickable(true);
-        } else {
-            frame.setBackgroundResource(R.drawable.bg_soft_button);
-            // Gray theme cho cái chưa khóa
-        }
+        // Set background và theme (Giả định Green cho cái đã mở, Gray cho cái chưa)
+        frame.setBackgroundResource(R.drawable.bg_soft_button);
 
         LinearLayout inner = new LinearLayout(this);
         inner.setLayoutParams(new FrameLayout.LayoutParams(-1, -1));
@@ -179,18 +175,16 @@ public class ProfileActivity extends AppCompatActivity {
         LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(dpToPx(45), dpToPx(45));
         img.setLayoutParams(imgParams);
         
-        if (!ach.isUnlocked) {
-            img.setAlpha(0.3f);
-        }
-
         TextView title = new TextView(this);
         title.setText(ach.title);
-        title.setTextColor(getResources().getColor(android.R.color.white));
+        title.setTextColor(android.graphics.Color.WHITE);
         title.setTextSize(12);
         title.setGravity(Gravity.CENTER);
         title.setPadding(0, dpToPx(8), 0, 0);
-        
+
         if (!ach.isUnlocked) {
+            img.setAlpha(0.3f);
+            img.setColorFilter(android.graphics.Color.GRAY);
             title.setAlpha(0.5f);
         }
 

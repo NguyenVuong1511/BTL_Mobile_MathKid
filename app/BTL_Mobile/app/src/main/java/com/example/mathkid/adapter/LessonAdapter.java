@@ -1,6 +1,7 @@
 package com.example.mathkid.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -10,12 +11,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mathkid.R;
+import com.example.mathkid.activities.QuizActivity;
 import com.example.mathkid.model.Lesson;
 
 import java.util.List;
@@ -109,25 +112,33 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
             imgStatus.setImageResource(R.drawable.ic_lock);
             txtNodeNum.setVisibility(View.GONE);
             btnStart.setVisibility(View.GONE);
-        } else if (lesson.isComplete) {
-            themeResId = isLeft ? R.style.GreenButtonTheme : R.style.BlueButtonTheme;
-            card.setAlpha(1.0f);
-            imgStatus.setVisibility(View.VISIBLE);
-            imgStatus.setImageResource(R.drawable.ic_check);
-            txtNodeNum.setVisibility(View.GONE);
-            btnStart.setVisibility(View.GONE);
-        } else if (isCurrent) {
-            themeResId = R.style.OrangeButtonTheme;
-            card.setAlpha(1.0f);
-            imgStatus.setVisibility(View.GONE);
-            txtNodeNum.setVisibility(View.VISIBLE);
-            btnStart.setVisibility(View.VISIBLE);
+            card.setOnClickListener(v -> Toast.makeText(context, "Bài học này đang bị khóa!", Toast.LENGTH_SHORT).show());
         } else {
-            themeResId = R.style.PurpleButtonTheme;
             card.setAlpha(1.0f);
             imgStatus.setVisibility(View.GONE);
             txtNodeNum.setVisibility(View.VISIBLE);
             btnStart.setVisibility(View.VISIBLE);
+            
+            if (lesson.isComplete) {
+                themeResId = isLeft ? R.style.GreenButtonTheme : R.style.BlueButtonTheme;
+                imgStatus.setVisibility(View.VISIBLE);
+                imgStatus.setImageResource(R.drawable.ic_check);
+                txtNodeNum.setVisibility(View.GONE);
+            } else if (isCurrent) {
+                themeResId = R.style.OrangeButtonTheme;
+            } else {
+                themeResId = R.style.PurpleButtonTheme;
+            }
+
+            // Xử lý sự kiện click để bắt đầu học
+            View.OnClickListener startLessonListener = v -> {
+                Intent intent = new Intent(context, QuizActivity.class);
+                intent.putExtra("activity_id", lesson.id);
+                intent.putExtra("lesson_title", lesson.title);
+                context.startActivity(intent);
+            };
+            card.setOnClickListener(startLessonListener);
+            btnStart.setOnClickListener(startLessonListener);
         }
 
         // Áp dụng theme động cho cả viền ngoài (card/node) và lõi trong (inner)
@@ -138,9 +149,7 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
     }
 
     private void applyThemeToView(View view, int themeResId, int backgroundResId) {
-        // Bọc context bằng theme mới để lấy được các attr tương ứng (?attr/gradientStart...)
         ContextThemeWrapper wrapper = new ContextThemeWrapper(context, themeResId);
-        // Ép view nhận drawable đã được load qua context có theme
         view.setBackground(AppCompatResources.getDrawable(wrapper, backgroundResId));
     }
 
@@ -163,7 +172,6 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
             layoutLeft = itemView.findViewById(R.id.layoutLeft);
             cardLeft = itemView.findViewById(R.id.cardLeft);
             nodeLeft = itemView.findViewById(R.id.nodeLeft);
-            // Lấy các View con (lớp nội dung bên trong) để đổi màu lõi
             innerCardLeft = cardLeft.getChildAt(0);
             innerNodeLeft = nodeLeft.getChildAt(0);
 

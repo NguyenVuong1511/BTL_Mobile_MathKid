@@ -13,22 +13,25 @@
         android:theme="@style/Theme.MathKid">
 
         <activity
-            android:name=".activities.ProfileActivity"
+            android:name="com.example.mathkid.activities.QuizActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.AchievementsActivity"
+            android:name="com.example.mathkid.activities.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.GameResultActivity"
+            android:name="com.example.mathkid.activities.AchievementsActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.ItemLevel"
+            android:name="com.example.mathkid.activities.GameResultActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.QuizResult"
+            android:name="com.example.mathkid.activities.ItemLevel"
             android:exported="false" />
         <activity
-            android:name=".activities.Welcome"
+            android:name="com.example.mathkid.activities.QuizResult"
+            android:exported="false" />
+        <activity
+            android:name="com.example.mathkid.activities.Welcome"
             android:exported="true"
             android:theme="@style/Theme.MathKid.Splash">
             <intent-filter>
@@ -37,13 +40,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.Login"
+            android:name="com.example.mathkid.activities.Login"
             android:exported="false" />
         <activity
-            android:name=".activities.Register"
+            android:name="com.example.mathkid.activities.Register"
             android:exported="false" />
         <activity
-            android:name=".activities.MainActivity"
+            android:name="com.example.mathkid.activities.MainActivity"
             android:exported="true" />
     </application>
 
