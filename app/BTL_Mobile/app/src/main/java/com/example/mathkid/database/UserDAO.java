@@ -108,6 +108,113 @@ public class UserDAO {
     }
 
     @SuppressLint("Range")
+    public List<UserData> getAllUsers() {
+        openRead();
+        List<UserData> list = new ArrayList<>();
+        Cursor cursor = db.query(UserEntry.TABLE_NAME, null, null, null, null, null, UserEntry.COLUMN_USERNAME + " ASC");
+        if (cursor.moveToFirst()) {
+            do {
+                UserData userData = new UserData();
+                userData.id = cursor.getInt(cursor.getColumnIndex(UserEntry._ID));
+                userData.username = cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_USERNAME));
+                userData.avatar = cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_AVATAR));
+                userData.level = cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_LEVEL));
+                userData.exp = cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_EXP));
+                userData.streak = cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_STREAK));
+                userData.totalStars = cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_TOTAL_STARS));
+                list.add(userData);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
+    public boolean deleteUser(int userId) {
+        openWrite();
+        db.delete(ProgressEntry.TABLE_NAME, ProgressEntry.COLUMN_USER_ID + "=?", new String[]{String.valueOf(userId)});
+        db.delete(UserAchievementEntry.TABLE_NAME, UserAchievementEntry.COLUMN_USER_ID + "=?", new String[]{String.valueOf(userId)});
+        int result = db.delete(UserEntry.TABLE_NAME, UserEntry._ID + "=?", new String[]{String.valueOf(userId)});
+        return result > 0;
+    }
+
+    @SuppressLint("Range")
+    public List<Question> getAllQuestions() {
+        openRead();
+        List<Question> list = new ArrayList<>();
+        Cursor cursor = db.query(QuestionsEntry.TABLE_NAME, null, null, null, null, null, QuestionsEntry._ID + " DESC");
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndex(QuestionsEntry._ID));
+                int activityId = cursor.getInt(cursor.getColumnIndex(QuestionsEntry.COLUMN_ACTIVITY_ID));
+                String type = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_QUESTION_TYPE));
+                String text = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_QUESTION_TEXT));
+                String image = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_IMAGE));
+                String answer = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_ANSWER_TEXT));
+                String optionsJson = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_OPTION_JSON));
+                
+                List<String> options = new ArrayList<>();
+                try {
+                    if (optionsJson != null && !optionsJson.isEmpty()) {
+                        JSONArray jsonArray = new JSONArray(optionsJson);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            options.add(jsonArray.getString(i));
+                        }
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+                
+                list.add(new Question(id, activityId, type, text, null, image, answer, options));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
+    public boolean addQuestion(int activityId, String type, String text, String image, String answer, String optionsJson) {
+        openWrite();
+        ContentValues cv = new ContentValues();
+        cv.put(QuestionsEntry.COLUMN_ACTIVITY_ID, activityId);
+        cv.put(QuestionsEntry.COLUMN_QUESTION_TYPE, type);
+        cv.put(QuestionsEntry.COLUMN_QUESTION_TEXT, text);
+        cv.put(QuestionsEntry.COLUMN_IMAGE, image);
+        cv.put(QuestionsEntry.COLUMN_ANSWER_TEXT, answer);
+        cv.put(QuestionsEntry.COLUMN_OPTION_JSON, optionsJson);
+        return db.insert(QuestionsEntry.TABLE_NAME, null, cv) != -1;
+    }
+
+    public boolean updateQuestion(int id, int activityId, String type, String text, String image, String answer, String optionsJson) {
+        openWrite();
+        ContentValues cv = new ContentValues();
+        cv.put(QuestionsEntry.COLUMN_ACTIVITY_ID, activityId);
+        cv.put(QuestionsEntry.COLUMN_QUESTION_TYPE, type);
+        cv.put(QuestionsEntry.COLUMN_QUESTION_TEXT, text);
+        cv.put(QuestionsEntry.COLUMN_IMAGE, image);
+        cv.put(QuestionsEntry.COLUMN_ANSWER_TEXT, answer);
+        cv.put(QuestionsEntry.COLUMN_OPTION_JSON, optionsJson);
+        return db.update(QuestionsEntry.TABLE_NAME, cv, QuestionsEntry._ID + "=?", new String[]{String.valueOf(id)}) > 0;
+    }
+
+    public boolean deleteQuestion(int id) {
+        openWrite();
+        return db.delete(QuestionsEntry.TABLE_NAME, QuestionsEntry._ID + "=?", new String[]{String.valueOf(id)}) > 0;
+    }
+
+    @SuppressLint("Range")
+    public List<Lesson> getAllActivitiesForAdmin() {
+        openRead();
+        List<Lesson> lessons = new ArrayList<>();
+        Cursor cursor = db.query(ActivitiesEntry.TABLE_NAME, null, null, null, null, null, ActivitiesEntry.COLUMN_ORDER_INDEX + " ASC");
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry._ID));
+                String title = cursor.getString(cursor.getColumnIndex(ActivitiesEntry.COLUMN_TITLE));
+                lessons.add(new Lesson(id, title, "", 0, false, false, 0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return lessons;
+    }
+
+    @SuppressLint("Range")
     public List<Question> getQuestions(int activityId) {
         openRead();
         List<Question> list = new ArrayList<>();
@@ -126,9 +233,11 @@ public class UserDAO {
                 
                 List<String> options = new ArrayList<>();
                 try {
-                    JSONArray jsonArray = new JSONArray(optionsJson);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        options.add(jsonArray.getString(i));
+                    if (optionsJson != null && !optionsJson.isEmpty()) {
+                        JSONArray jsonArray = new JSONArray(optionsJson);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            options.add(jsonArray.getString(i));
+                        }
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
                 
@@ -157,9 +266,11 @@ public class UserDAO {
                 
                 List<String> options = new ArrayList<>();
                 try {
-                    JSONArray jsonArray = new JSONArray(optionsJson);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        options.add(jsonArray.getString(i));
+                    if (optionsJson != null && !optionsJson.isEmpty()) {
+                        JSONArray jsonArray = new JSONArray(optionsJson);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            options.add(jsonArray.getString(i));
+                        }
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
                 

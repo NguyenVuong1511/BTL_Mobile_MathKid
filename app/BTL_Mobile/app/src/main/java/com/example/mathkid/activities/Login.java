@@ -79,6 +79,11 @@ public class Login extends AppCompatActivity {
 
                 if (user.isEmpty() || pass.isEmpty()) {
                     Toast.makeText(Login.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                } else if (user.equals("admin") && pass.equals("admin123")) {
+                    Toast.makeText(Login.this, "Chào mừng Admin!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(Login.this, AdminDashboardActivity.class);
+                    startActivity(intent);
+                    finish();
                 } else {
                     boolean isValid = userDAO.checkLogin(user, pass);
                     if (isValid) {

@@ -18,4 +18,60 @@ public class Lesson {
         this.isComplete = isComplete;
         this.orderIndex = orderIndex;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public int getStarsEarned() {
+        return starsEarned;
+    }
+
+    public void setStarsEarned(int starsEarned) {
+        this.starsEarned = starsEarned;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
+
+    public boolean isComplete() {
+        return isComplete;
+    }
+
+    public void setComplete(boolean complete) {
+        isComplete = complete;
+    }
+
+    public int getOrderIndex() {
+        return orderIndex;
+    }
+
+    public void setOrderIndex(int orderIndex) {
+        this.orderIndex = orderIndex;
+    }
 }

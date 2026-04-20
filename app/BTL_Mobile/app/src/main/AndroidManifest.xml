@@ -13,6 +13,26 @@
         android:theme="@style/Theme.MathKid">
 
         <activity
+            android:name="com.example.mathkid.activities.ManageLevelsActivity"
+            android:exported="false"
+            android:label="Quản lý cấp độ" />
+        <activity
+            android:name="com.example.mathkid.activities.AddQuestionActivity"
+            android:exported="false"
+            android:label="Thêm câu hỏi" />
+        <activity
+            android:name="com.example.mathkid.activities.ManageQuestionsActivity"
+            android:exported="false"
+            android:label="Quản lý Câu hỏi" />
+        <activity
+            android:name="com.example.mathkid.activities.ManageUsersActivity"
+            android:exported="false"
+            android:label="Quản lý Người dùng" />
+        <activity
+            android:name="com.example.mathkid.activities.AdminDashboardActivity"
+            android:exported="false"
+            android:label="Admin Dashboard" />
+        <activity
             android:name="com.example.mathkid.activities.RankingActivity"
             android:exported="false" />
         <activity
