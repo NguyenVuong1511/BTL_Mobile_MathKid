@@ -84,6 +84,30 @@ public class UserDAO {
     }
 
     @SuppressLint("Range")
+    public List<UserData> getTopUsers(int limit) {
+        openRead();
+        List<UserData> list = new ArrayList<>();
+        Cursor cursor = db.query(UserEntry.TABLE_NAME, null, null, null, null, null, 
+                UserEntry.COLUMN_EXP + " DESC", String.valueOf(limit));
+        
+        if (cursor.moveToFirst()) {
+            do {
+                UserData userData = new UserData();
+                userData.id = cursor.getInt(cursor.getColumnIndex(UserEntry._ID));
+                userData.username = cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_USERNAME));
+                userData.avatar = cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_AVATAR));
+                userData.level = cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_LEVEL));
+                userData.exp = cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_EXP));
+                userData.streak = cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_STREAK));
+                userData.totalStars = cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_TOTAL_STARS));
+                list.add(userData);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
+    @SuppressLint("Range")
     public List<Question> getQuestions(int activityId) {
         openRead();
         List<Question> list = new ArrayList<>();
@@ -94,6 +118,37 @@ public class UserDAO {
         if (cursor.moveToFirst()) {
             do {
                 int id = cursor.getInt(cursor.getColumnIndex(QuestionsEntry._ID));
+                String type = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_QUESTION_TYPE));
+                String text = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_QUESTION_TEXT));
+                String image = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_IMAGE));
+                String answer = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_ANSWER_TEXT));
+                String optionsJson = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_OPTION_JSON));
+                
+                List<String> options = new ArrayList<>();
+                try {
+                    JSONArray jsonArray = new JSONArray(optionsJson);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        options.add(jsonArray.getString(i));
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+                
+                list.add(new Question(id, activityId, type, text, null, image, answer, options));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
+    @SuppressLint("Range")
+    public List<Question> getRandomQuestions(int limit) {
+        openRead();
+        List<Question> list = new ArrayList<>();
+        Cursor cursor = db.query(QuestionsEntry.TABLE_NAME, null, null, null, null, null, "RANDOM()", String.valueOf(limit));
+        
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndex(QuestionsEntry._ID));
+                int activityId = cursor.getInt(cursor.getColumnIndex(QuestionsEntry.COLUMN_ACTIVITY_ID));
                 String type = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_QUESTION_TYPE));
                 String text = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_QUESTION_TEXT));
                 String image = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_IMAGE));
@@ -126,9 +181,7 @@ public class UserDAO {
         cv.put(ProgressEntry.COLUMN_LAST_PLAYED, System.currentTimeMillis());
         db.replace(ProgressEntry.TABLE_NAME, null, cv);
 
-        // Mở khóa bài tiếp theo nếu hoàn thành bài này
         if (isComplete) {
-            // Lấy order_index của bài hiện tại
             Cursor c = db.query(ActivitiesEntry.TABLE_NAME, new String[]{ActivitiesEntry.COLUMN_ORDER_INDEX},
                     ActivitiesEntry._ID + "=?", new String[]{String.valueOf(activityId)}, null, null, null);
             if (c.moveToFirst()) {
@@ -161,9 +214,59 @@ public class UserDAO {
     }
 
     @SuppressLint("Range")
+    public ProgressSummary getUserProgressSummary(int userId) {
+        openRead();
+        ProgressSummary summary = new ProgressSummary();
+        summary.topicStats = new ArrayList<>();
+        
+        try {
+            // 1. Tổng số bài học
+            Cursor c1 = db.rawQuery("SELECT COUNT(*) FROM " + ActivitiesEntry.TABLE_NAME, null);
+            if (c1.moveToFirst()) summary.totalActivities = c1.getInt(0);
+            c1.close();
+            
+            // 2. Bài đã hoàn thành
+            Cursor c2 = db.rawQuery("SELECT COUNT(*) FROM " + ProgressEntry.TABLE_NAME + " WHERE " + ProgressEntry.COLUMN_USER_ID + " = ? AND " + ProgressEntry.COLUMN_IS_COMPLETE + " = 1", new String[]{String.valueOf(userId)});
+            if (c2.moveToFirst()) summary.completedActivities = c2.getInt(0);
+            c2.close();
+            
+            // 3. Tổng số sao có thể đạt (mỗi bài tối đa 3 sao)
+            summary.totalStarsPossible = summary.totalActivities * 3;
+            
+            // 4. Tổng số sao hiện tại
+            Cursor c3 = db.rawQuery("SELECT SUM(" + ProgressEntry.COLUMN_STARS_EARNED + ") FROM " + ProgressEntry.TABLE_NAME + " WHERE " + ProgressEntry.COLUMN_USER_ID + " = ?", new String[]{String.valueOf(userId)});
+            if (c3.moveToFirst()) summary.totalStarsEarned = c3.getInt(0);
+            c3.close();
+            
+            // 5. Thống kê theo chủ đề
+            String sqlTopic = "SELECT t." + TopicEntry.COLUMN_TITLE + ", COUNT(a." + ActivitiesEntry._ID + ") as total, " +
+                    "SUM(CASE WHEN p." + ProgressEntry.COLUMN_IS_COMPLETE + " = 1 THEN 1 ELSE 0 END) as done " +
+                    "FROM " + TopicEntry.TABLE_NAME + " t " +
+                    "JOIN " + ActivitiesEntry.TABLE_NAME + " a ON t." + TopicEntry._ID + " = a." + ActivitiesEntry.COLUMN_TOPIC_ID + " " +
+                    "LEFT JOIN " + ProgressEntry.TABLE_NAME + " p ON a." + ActivitiesEntry._ID + " = p." + ProgressEntry.COLUMN_ACTIVITY_ID + " AND p." + ProgressEntry.COLUMN_USER_ID + " = ? " +
+                    "GROUP BY t." + TopicEntry._ID;
+            
+            Cursor c4 = db.rawQuery(sqlTopic, new String[]{String.valueOf(userId)});
+            if (c4.moveToFirst()) {
+                do {
+                    TopicProgress tp = new TopicProgress();
+                    tp.title = c4.getString(0);
+                    tp.total = c4.getInt(1);
+                    tp.completed = c4.getInt(2);
+                    summary.topicStats.add(tp);
+                } while (c4.moveToNext());
+            }
+            c4.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return summary;
+    }
+
+    @SuppressLint("Range")
     public void checkAndUnlockAchievements(int userId) {
         openRead();
-        // 1. Lấy thông tin người dùng
         int totalStars = 0;
         int totalXP = 0;
         int completedLessons = 0;
@@ -182,7 +285,6 @@ public class UserDAO {
         completedLessons = lessonCursor.getCount();
         lessonCursor.close();
 
-        // 2. Duyệt danh sách thành tích
         Cursor achCursor = db.query(AchievementEntry.TABLE_NAME, null, null, null, null, null, null);
         if (achCursor.moveToFirst()) {
             do {
@@ -238,40 +340,47 @@ public class UserDAO {
         Cursor cursor = db.query(ActivitiesEntry.TABLE_NAME, null, null, null, null, null, null);
         if (cursor.getCount() == 0) {
             openWrite();
+            
+            // Thêm topic mẫu nếu chưa có
+            ContentValues tc = new ContentValues();
+            tc.put(TopicEntry.COLUMN_TITLE, "Toán cơ bản");
+            tc.put(TopicEntry.COLUMN_INDEX, 1);
+            long topicId = db.insert(TopicEntry.TABLE_NAME, null, tc);
+
             // Bài 1: Làm quen số 1-5
-            long act1 = addActivity("Làm quen số 1-5", "quiz", 50, 0, 1);
+            long act1 = addActivity((int)topicId, "Làm quen số 1-5", "quiz", 50, 0, 1);
             addQuestion((int)act1, "Có bao nhiêu Gấu Trúc nào?", "panda", "1", "[\"1\", \"2\", \"3\", \"5\"]");
             addQuestion((int)act1, "Đếm xem có bao nhiêu Chú Thỏ?", "rabbit", "3", "[\"2\", \"3\", \"4\", \"1\"]");
             addQuestion((int)act1, "Có mấy Chú Chó ở đây nhỉ?", "dog", "2", "[\"1\", \"2\", \"4\", \"3\"]");
 
             // Bài 2: Bé tập đếm đến 10
-            long act2 = addActivity("Bé tập đếm đến 10", "quiz", 60, 1, 2);
+            long act2 = addActivity((int)topicId, "Bé tập đếm đến 10", "quiz", 60, 1, 2);
             addQuestion((int)act2, "Số 'Bảy' viết như thế nào?", "fox", "7", "[\"5\", \"6\", \"7\", \"8\"]");
             addQuestion((int)act2, "Đâu là số 'Mười'?", "panda", "10", "[\"1\", \"0\", \"10\", \"100\"]");
 
             // Bài 3: So sánh Lớn - Bé
-            long act3 = addActivity("So sánh Lớn - Bé", "quiz", 70, 1, 3);
+            long act3 = addActivity((int)topicId, "So sánh Lớn - Bé", "quiz", 70, 1, 3);
             addQuestion((int)act3, "3 quả táo so với 5 quả táo thì bên nào ÍT hơn?", "cat", "3", "[\"3\", \"5\", \"Bằng nhau\"]");
             addQuestion((int)act3, "Số nào LỚN hơn trong hai số này?", "pig", "9", "[\"4\", \"9\", \"7\"]");
 
             // Bài 4: Phép cộng vui nhộn
-            long act4 = addActivity("Phép cộng vui nhộn", "quiz", 80, 1, 4);
+            long act4 = addActivity((int)topicId, "Phép cộng vui nhộn", "quiz", 80, 1, 4);
             addQuestion((int)act4, "1 + 2 bằng mấy bé ơi?", "dog", "3", "[\"2\", \"3\", \"4\", \"5\"]");
             addQuestion((int)act4, "Nếu có 2 cái kẹo, mẹ cho thêm 2 cái nữa thì có mấy cái?", "rabbit", "4", "[\"3\", \"4\", \"5\"]");
 
             // Bài 5: Thử thách kéo thả
-            long act5 = addActivity("Thử thách kéo thả", "drag", 100, 1, 5);
+            long act5 = addActivity((int)topicId, "Thử thách kéo thả", "drag", 100, 1, 5);
             addQuestionDrag((int)act5, "Hãy kéo số '5' vào ô trống bên dưới", "rabbit", "5", "[\"3\", \"5\", \"8\"]");
             addQuestionDrag((int)act5, "Số nào là số 'Hai' nào?", "dog", "2", "[\"1\", \"2\", \"4\"]");
             addQuestionDrag((int)act5, "Bé kéo số lượng Gấu Trúc (1) vào nhé", "panda", "1", "[\"1\", \"3\", \"0\"]");
 
             // Bài 6: Bé tập nối cặp
-            long act6 = addActivity("Bé tập nối cặp", "matching", 120, 1, 6);
+            long act6 = addActivity((int)topicId, "Bé tập nối cặp", "matching", 120, 1, 6);
             addQuestionMatching((int)act6, "Bé hãy nối số với chữ tương ứng nhé", "[\"1:One\", \"2:Two\", \"3:Three\", \"4:Four\"]");
             addQuestionMatching((int)act6, "Nối động vật với thức ăn nào", "[\"Gấu:Mật ong\", \"Thỏ:Cà rốt\", \"Chó:Xương\"]");
 
             // Bài 7: Bé tập so sánh
-            long act7 = addActivity("Bé tập so sánh", "comparison", 150, 1, 7);
+            long act7 = addActivity((int)topicId, "Bé tập so sánh", "comparison", 150, 1, 7);
             addQuestionComparison((int)act7, "Bé hãy chọn dấu thích hợp nhé", "5", "8", "<");
             addQuestionComparison((int)act7, "Số nào lớn hơn nhỉ?", "10", "3", ">");
             addQuestionComparison((int)act7, "Bé xem hai số này thế nào với nhau?", "4", "4", "=");
@@ -279,9 +388,9 @@ public class UserDAO {
         cursor.close();
     }
 
-    private long addActivity(String title, String type, int xp, int locked, int index) {
+    private long addActivity(int topicId, String title, String type, int xp, int locked, int index) {
         ContentValues cv = new ContentValues();
-        cv.put(ActivitiesEntry.COLUMN_TOPIC_ID, 1);
+        cv.put(ActivitiesEntry.COLUMN_TOPIC_ID, topicId);
         cv.put(ActivitiesEntry.COLUMN_TITLE, title);
         cv.put(ActivitiesEntry.COLUMN_GAME_TYPE, type);
         cv.put(ActivitiesEntry.COLUMN_XP_REWARD, xp);
@@ -366,5 +475,19 @@ public class UserDAO {
         public int exp;
         public int streak;
         public int totalStars;
+    }
+    
+    public static class ProgressSummary {
+        public int totalActivities = 0;
+        public int completedActivities = 0;
+        public int totalStarsEarned = 0;
+        public int totalStarsPossible = 0;
+        public List<TopicProgress> topicStats = new ArrayList<>();
+    }
+    
+    public static class TopicProgress {
+        public String title;
+        public int total;
+        public int completed;
     }
 }

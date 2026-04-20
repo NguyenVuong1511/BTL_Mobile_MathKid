@@ -1,7 +1,9 @@
 package com.example.mathkid.activities;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // Khởi tạo SessionManager và kiểm tra đăng nhập
         sessionManager = new SessionManager(this);
         if (!sessionManager.isLoggedIn()) {
             redirectToWelcome();
@@ -46,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // Khởi tạo Database DAO
         userDAO = new UserDAO(this);
 
         initViews();
@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh dữ liệu mỗi khi quay lại màn hình chính
         loadUserData();
     }
 
@@ -90,26 +89,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        // Mở hồ sơ
         imgAvatar.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         navProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
 
-        // Các chức năng học tập
         btnLearn.setOnClickListener(v -> {
-            // Chuyển đến màn hình chọn cấp độ/bài học
             startActivity(new Intent(this, ItemLevel.class));
         });
 
         btnPractice.setOnClickListener(v -> {
-            Toast.makeText(this, "Chế độ luyện tập đang phát triển!", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, PracticeActivity.class));
         });
 
         btnExam.setOnClickListener(v -> {
-            Toast.makeText(this, "Kỳ thi sẽ mở vào cuối tuần!", Toast.LENGTH_SHORT).show();
+            // Mở màn hình Bài thi
+            startActivity(new Intent(this, ExamActivity.class));
         });
 
         btnGames.setOnClickListener(v -> {
-            Toast.makeText(this, "Trò chơi toán học đang được cập nhật!", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, MathGameActivity.class));
         });
 
         btnAchievements.setOnClickListener(v -> {
@@ -117,16 +114,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnProgress.setOnClickListener(v -> {
-            Toast.makeText(this, "Xem thống kê chi tiết tiến trình của bạn", Toast.LENGTH_SHORT).show();
-        });
-
-        // Bottom Navigation
-        navHome.setOnClickListener(v -> {
-            // Đang ở Home rồi, có thể cuộn lên đầu nếu cần
+            startActivity(new Intent(this, ProgressActivity.class));
         });
 
         navRanking.setOnClickListener(v -> {
-            Toast.makeText(this, "Bảng xếp hạng đang tải...", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, RankingActivity.class));
         });
     }
 
@@ -137,8 +129,6 @@ public class MainActivity extends AppCompatActivity {
         if (data != null) {
             txtName.setText(data.username);
             
-            // Logic tính toán Level và XP
-            // Mỗi 500 XP lên 1 level
             int xpPerLevel = 500;
             int currentLevel = (data.exp / xpPerLevel) + 1;
             int xpInCurrentLevel = data.exp % xpPerLevel;
@@ -154,16 +144,12 @@ public class MainActivity extends AppCompatActivity {
 
             txtStreakTitle.setText("Chuỗi " + data.streak + " ngày!");
 
-            // Hiển thị Avatar từ tài nguyên drawable
             if (data.avatar != null && !data.avatar.isEmpty()) {
                 int resId = getResources().getIdentifier(data.avatar.toLowerCase(), "drawable", getPackageName());
                 if (resId != 0) {
                     imgAvatar.setImageResource(resId);
                 }
             }
-            
-            // Cập nhật level vào DB nếu có sự thay đổi (tùy chọn)
-            // if (currentLevel != data.level) { ... update level in db ... }
         }
     }
 

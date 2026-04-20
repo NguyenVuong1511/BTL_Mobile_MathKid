@@ -2,7 +2,7 @@ package com.example.mathkid.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,7 +18,7 @@ public class QuizResult extends AppCompatActivity {
     private TextView txtTitle, txtSub, txtXPEarned, txtResultCorrect, txtResultStars, txtResultStreak, txtHome;
     private ImageView imgTrophy;
     private LinearLayout layoutStars;
-    private Button btnNext, btnRetry;
+    private View btnNext, btnRetry;
 
     private UserDAO userDAO;
     private SessionManager sessionManager;
@@ -60,7 +60,7 @@ public class QuizResult extends AppCompatActivity {
 
         // Hiển thị text chỉ số
         if (txtResultCorrect != null) txtResultCorrect.setText(String.valueOf(correct));
-        if (txtXPEarned != null) txtXPEarned.setText("+" + xp + " ĐIỂM THƯỞNG ⚡");
+        if (txtXPEarned != null) txtXPEarned.setText("+" + xp + " XP ⚡");
         
         // Tính số sao
         int stars = 0;
@@ -71,7 +71,7 @@ public class QuizResult extends AppCompatActivity {
             else if (ratio >= 0.3f) stars = 1;
         }
         
-        if (txtResultStars != null) txtResultStars.setText(stars + "/3");
+        if (txtResultStars != null) txtResultStars.setText(stars + "/" + (total > 0 ? "3" : "0"));
 
         // Cập nhật giao diện sao (layoutStars có 3 con là ImageView)
         if (layoutStars != null) {

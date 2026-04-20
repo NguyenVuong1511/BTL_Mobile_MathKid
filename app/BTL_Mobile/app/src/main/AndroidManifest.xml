@@ -13,7 +13,22 @@
         android:theme="@style/Theme.MathKid">
 
         <activity
+            android:name="com.example.mathkid.activities.RankingActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.example.mathkid.activities.MathGameActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.example.mathkid.activities.ProgressActivity"
+            android:exported="false" />
+        <activity
             android:name="com.example.mathkid.activities.QuizActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.example.mathkid.activities.PracticeActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.example.mathkid.activities.ExamActivity"
             android:exported="false" />
         <activity
             android:name="com.example.mathkid.activities.ProfileActivity"
