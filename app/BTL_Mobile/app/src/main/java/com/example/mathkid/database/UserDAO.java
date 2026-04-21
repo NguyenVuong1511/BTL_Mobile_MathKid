@@ -577,6 +577,57 @@ public class UserDAO {
         return list;
     }
 
+    @SuppressLint("Range")
+    public List<Achievement> getAllAchievementsAdmin() {
+        openRead();
+        List<Achievement> list = new ArrayList<>();
+        Cursor cursor = db.query(AchievementEntry.TABLE_NAME, null, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(new Achievement(
+                    cursor.getInt(cursor.getColumnIndex(AchievementEntry._ID)),
+                    cursor.getString(cursor.getColumnIndex(AchievementEntry.COLUMN_TITLE)),
+                    cursor.getString(cursor.getColumnIndex(AchievementEntry.COLUMN_DESCRIPTION)),
+                    cursor.getString(cursor.getColumnIndex(AchievementEntry.COLUMN_ICON)),
+                    cursor.getString(cursor.getColumnIndex(AchievementEntry.COLUMN_TYPE)),
+                    cursor.getInt(cursor.getColumnIndex(AchievementEntry.COLUMN_REQUIRED_VALUE)),
+                    false,
+                    0
+                ));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
+    public boolean addAchievementAdmin(String title, String description, String icon, String type, int requiredValue) {
+        openWrite();
+        ContentValues cv = new ContentValues();
+        cv.put(AchievementEntry.COLUMN_TITLE, title);
+        cv.put(AchievementEntry.COLUMN_DESCRIPTION, description);
+        cv.put(AchievementEntry.COLUMN_ICON, icon);
+        cv.put(AchievementEntry.COLUMN_TYPE, type);
+        cv.put(AchievementEntry.COLUMN_REQUIRED_VALUE, requiredValue);
+        return db.insert(AchievementEntry.TABLE_NAME, null, cv) != -1;
+    }
+
+    public boolean updateAchievementAdmin(int id, String title, String description, String icon, String type, int requiredValue) {
+        openWrite();
+        ContentValues cv = new ContentValues();
+        cv.put(AchievementEntry.COLUMN_TITLE, title);
+        cv.put(AchievementEntry.COLUMN_DESCRIPTION, description);
+        cv.put(AchievementEntry.COLUMN_ICON, icon);
+        cv.put(AchievementEntry.COLUMN_TYPE, type);
+        cv.put(AchievementEntry.COLUMN_REQUIRED_VALUE, requiredValue);
+        return db.update(AchievementEntry.TABLE_NAME, cv, AchievementEntry._ID + "=?", new String[]{String.valueOf(id)}) > 0;
+    }
+
+    public boolean deleteAchievementAdmin(int id) {
+        openWrite();
+        db.delete(UserAchievementEntry.TABLE_NAME, UserAchievementEntry.COLUMN_ACHIEVEMENT_ID + "=?", new String[]{String.valueOf(id)});
+        return db.delete(AchievementEntry.TABLE_NAME, AchievementEntry._ID + "=?", new String[]{String.valueOf(id)}) > 0;
+    }
+
     public void seedDataIfNeeded() {
         openRead();
         Cursor cursor = db.query(ActivitiesEntry.TABLE_NAME, null, null, null, null, null, null);

@@ -17,6 +17,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         CardView cardUsers = findViewById(R.id.cardUsers);
         CardView cardLessons = findViewById(R.id.cardLessons);
         CardView cardQuestions = findViewById(R.id.cardQuestions);
+        CardView cardAchievements = findViewById(R.id.cardAchievements);
         CardView cardStats = findViewById(R.id.cardStats);
         ImageView btnLogout = findViewById(R.id.btnLogout);
 
@@ -30,6 +31,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         cardQuestions.setOnClickListener(v -> {
             startActivity(new Intent(AdminDashboardActivity.this, ManageQuestionsActivity.class));
+        });
+
+        cardAchievements.setOnClickListener(v -> {
+            startActivity(new Intent(AdminDashboardActivity.this, AchievementManagementActivity.class));
         });
 
         cardStats.setOnClickListener(v -> {

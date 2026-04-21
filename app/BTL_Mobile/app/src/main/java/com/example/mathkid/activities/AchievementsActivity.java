@@ -1,7 +1,10 @@
 package com.example.mathkid.activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -32,7 +35,6 @@ public class AchievementsActivity extends AppCompatActivity {
     private TextView txtBadgeProgress;
     private LinearLayout navHome, navRanking, navProfile;
     
-    // Mảng chứa các FrameLayout của huy hiệu để dễ quản lý
     private FrameLayout[] achievementContainers = new FrameLayout[9];
     private ImageView[] badgeImages = new ImageView[9];
     private TextView[] badgeTitles = new TextView[9];
@@ -71,7 +73,6 @@ public class AchievementsActivity extends AppCompatActivity {
         navRanking = findViewById(R.id.navRanking);
         navProfile = findViewById(R.id.navProfile);
 
-        // Ánh xạ tối đa 9 ô huy hiệu từ XML
         for (int i = 0; i < 9; i++) {
             int containerId = getResources().getIdentifier("achievement" + (i + 1), "id", getPackageName());
             if (containerId != 0) {
@@ -94,12 +95,11 @@ public class AchievementsActivity extends AppCompatActivity {
         });
 
         navRanking.setOnClickListener(v -> {
-            Toast.makeText(this, "Bảng xếp hạng đang cập nhật!", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, RankingActivity.class));
         });
 
         navProfile.setOnClickListener(v -> {
             startActivity(new Intent(this, ProfileActivity.class));
-            finish();
         });
     }
 
@@ -111,7 +111,6 @@ public class AchievementsActivity extends AppCompatActivity {
             List<Achievement> achievements = userDAO.getAchievements(userData.id);
             int earnedCount = 0;
 
-            // Ẩn tất cả trước
             for (int i = 0; i < 9; i++) {
                 if (achievementContainers[i] != null) achievementContainers[i].setVisibility(View.GONE);
             }
@@ -127,23 +126,46 @@ public class AchievementsActivity extends AppCompatActivity {
                 if (a.isUnlocked) {
                     earnedCount++;
                     applyThemeToAchievement(i, R.style.OrangeButtonTheme, false);
-                    
-                    // Set icon thành tích (nếu có trong drawable)
-                    int iconRes = getResources().getIdentifier(a.icon, "drawable", getPackageName());
-                    if (iconRes != 0) {
-                        badgeImages[i].setImageResource(iconRes);
-                        badgeImages[i].setColorFilter(null);
-                    }
+                    setIcon(badgeImages[i], a.icon, false);
                 } else {
                     applyThemeToAchievement(i, R.style.GrayButtonTheme, true);
-                    badgeImages[i].setImageResource(R.drawable.ic_lock);
-                    badgeImages[i].setColorFilter(android.graphics.Color.parseColor("#9E9E9E"));
+                    setIcon(badgeImages[i], a.icon, true);
                 }
             }
 
             txtBadgeProgress.setText("Bé đã đạt " + earnedCount + " / " + achievements.size() + " huy hiệu");
             achievementProgress.setMax(achievements.size());
             achievementProgress.setProgress(earnedCount);
+        }
+    }
+
+    private void setIcon(ImageView imageView, String icon, boolean isLocked) {
+        if (isLocked) {
+            imageView.setImageResource(R.drawable.ic_lock);
+            imageView.setColorFilter(android.graphics.Color.parseColor("#9E9E9E"));
+            return;
+        }
+
+        imageView.setColorFilter(null);
+        if (icon != null && !icon.isEmpty()) {
+            if (icon.startsWith("ic_") || !icon.contains("/") && !icon.contains("+")) {
+                int iconRes = getResources().getIdentifier(icon, "drawable", getPackageName());
+                if (iconRes != 0) {
+                    imageView.setImageResource(iconRes);
+                } else {
+                    imageView.setImageResource(R.drawable.ic_star);
+                }
+            } else {
+                try {
+                    byte[] decodedString = Base64.decode(icon, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    imageView.setImageBitmap(decodedByte);
+                } catch (Exception e) {
+                    imageView.setImageResource(R.drawable.ic_star);
+                }
+            }
+        } else {
+            imageView.setImageResource(R.drawable.ic_star);
         }
     }
 

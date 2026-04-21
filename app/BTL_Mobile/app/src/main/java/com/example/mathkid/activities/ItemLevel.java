@@ -59,9 +59,6 @@ public class ItemLevel extends AppCompatActivity {
         recyclerViewLessons = findViewById(R.id.recyclerViewLessons);
         txtProgressSummary = findViewById(R.id.txtProgressSummary);
         btnBack = findViewById(R.id.btnBack);
-        navHome = findViewById(R.id.navHome);
-        navRanking = findViewById(R.id.navRanking);
-        navProfile = findViewById(R.id.navProfile);
     }
 
     private void setupRecyclerView() {
@@ -97,17 +94,5 @@ public class ItemLevel extends AppCompatActivity {
 
     private void setupClickListeners() {
         btnBack.setOnClickListener(v -> finish());
-        
-        navHome.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        });
-
-        navProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
-
-        navRanking.setOnClickListener(v -> {
-            Toast.makeText(this, "Bảng xếp hạng đang cập nhật!", Toast.LENGTH_SHORT).show();
-        });
     }
 }

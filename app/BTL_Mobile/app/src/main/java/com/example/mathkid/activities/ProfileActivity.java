@@ -1,7 +1,10 @@
 package com.example.mathkid.activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -76,13 +79,11 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        // Xem tất cả thành tích
         btnViewAllAchievements.setOnClickListener(v -> {
             Intent intent = new Intent(this, AchievementsActivity.class);
             startActivity(intent);
         });
 
-        // Nút đăng xuất
         btnLogout.setOnClickListener(v -> {
             sessionManager.logout();
             Toast.makeText(this, "Đã đăng xuất!", Toast.LENGTH_SHORT).show();
@@ -103,7 +104,9 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         navRanking.setOnClickListener(v -> {
-            Toast.makeText(this, "Bảng xếp hạng đang cập nhật!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, RankingActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         });
     }
 
@@ -116,7 +119,6 @@ public class ProfileActivity extends AppCompatActivity {
             txtProfileXP.setText(String.valueOf(data.exp));
             txtProfileStreak.setText(String.valueOf(data.streak));
 
-            // Đồng bộ logic tính toán Level và XP với MainActivity
             int xpPerLevel = 500;
             int currentLevel = (data.exp / xpPerLevel) + 1;
             int xpInCurrentLevel = data.exp % xpPerLevel;
@@ -133,7 +135,6 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             }
 
-            // Load thành tích từ CSDL
             loadAchievements(data.id);
         }
     }
@@ -142,7 +143,6 @@ public class ProfileActivity extends AppCompatActivity {
         layoutAchievements.removeAllViews();
         List<Achievement> achievements = userDAO.getAchievements(userId);
         
-        // Chỉ hiển thị 5 thành tích đầu tiên ở màn hình profile
         int count = 0;
         for (Achievement ach : achievements) {
             if (count >= 5) break;
@@ -152,7 +152,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void addAchievementView(Achievement ach) {
-        // Tạo View thành tích động theo phong cách Soft UI
         FrameLayout frame = new FrameLayout(this);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 dpToPx(110), dpToPx(130));
@@ -160,7 +159,6 @@ public class ProfileActivity extends AppCompatActivity {
         frame.setLayoutParams(params);
         frame.setPadding(dpToPx(4), dpToPx(4), dpToPx(4), dpToPx(4));
         
-        // Set background và theme (Giả định Green cho cái đã mở, Gray cho cái chưa)
         frame.setBackgroundResource(R.drawable.bg_soft_button);
 
         LinearLayout inner = new LinearLayout(this);
@@ -170,10 +168,25 @@ public class ProfileActivity extends AppCompatActivity {
         inner.setBackgroundResource(R.drawable.bg_soft_inner);
 
         ImageView img = new ImageView(this);
-        int iconRes = getResources().getIdentifier(ach.icon, "drawable", getPackageName());
-        img.setImageResource(iconRes != 0 ? iconRes : R.drawable.ic_star);
         LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(dpToPx(45), dpToPx(45));
         img.setLayoutParams(imgParams);
+
+        if (ach.icon != null && !ach.icon.isEmpty()) {
+            if (ach.icon.startsWith("ic_") || !ach.icon.contains("/") && !ach.icon.contains("+")) {
+                int iconRes = getResources().getIdentifier(ach.icon, "drawable", getPackageName());
+                img.setImageResource(iconRes != 0 ? iconRes : R.drawable.ic_star);
+            } else {
+                try {
+                    byte[] decodedString = Base64.decode(ach.icon, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    img.setImageBitmap(decodedByte);
+                } catch (Exception e) {
+                    img.setImageResource(R.drawable.ic_star);
+                }
+            }
+        } else {
+            img.setImageResource(R.drawable.ic_star);
+        }
         
         TextView title = new TextView(this);
         title.setText(ach.title);
@@ -186,6 +199,10 @@ public class ProfileActivity extends AppCompatActivity {
             img.setAlpha(0.3f);
             img.setColorFilter(android.graphics.Color.GRAY);
             title.setAlpha(0.5f);
+        } else {
+            img.setAlpha(1.0f);
+            img.setColorFilter(null);
+            title.setAlpha(1.0f);
         }
 
         inner.addView(img);
