@@ -2,16 +2,17 @@ package com.example.mathkid.activities;
 
 import android.animation.ObjectAnimator;
 import android.content.ClipData;
-import android.content.ClipDescription;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Base64;
 import android.view.DragEvent;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -120,7 +121,7 @@ public class ExamActivity extends AppCompatActivity {
         zone.setOnDragListener((v, event) -> {
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
-                    return event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN);
+                    return event.getClipDescription().hasMimeType(android.content.ClipDescription.MIMETYPE_TEXT_PLAIN);
                 case DragEvent.ACTION_DROP:
                     if (isAnswered) return false;
                     ClipData data = event.getClipData();
@@ -134,7 +135,6 @@ public class ExamActivity extends AppCompatActivity {
     }
 
     private void loadExamQuestions() {
-        // Bài thi chuẩn gồm 20 câu hỏi ngẫu nhiên
         questionList = userDAO.getRandomQuestions(20);
         if (questionList == null || questionList.isEmpty()) {
             Toast.makeText(this, "Không tìm thấy câu hỏi cho bài thi!", Toast.LENGTH_SHORT).show();
@@ -150,7 +150,7 @@ public class ExamActivity extends AppCompatActivity {
                 int seconds = (int) (millisUntilFinished / 1000) % 60;
                 txtTimer.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
                 
-                if (millisUntilFinished < 60000) { // Dưới 1 phút đổi sang màu đỏ
+                if (millisUntilFinished < 60000) {
                     txtTimer.setTextColor(getResources().getColor(android.R.color.holo_red_light));
                 }
             }
@@ -175,13 +175,36 @@ public class ExamActivity extends AppCompatActivity {
             txtQuestionText.setText(q.getText());
             correctAnswer = q.getAnswer();
 
-            if (q.getImage() != null && !q.getImage().isEmpty()) {
-                int resId = getResources().getIdentifier(q.getImage(), "drawable", getPackageName());
-                imgQuestion.setImageResource(resId != 0 ? resId : R.drawable.panda);
-                imgQuestion.setVisibility(View.VISIBLE);
-            } else imgQuestion.setVisibility(View.GONE);
+            // SỬA LỖI HIỂN THỊ ẢNH TRONG BÀI THI (Hỗ trợ cả Resource Name và Base64)
+            if (imgQuestion != null) {
+                if (q.getImage() != null && !q.getImage().isEmpty()) {
+                    if (q.getImage().length() > 100) { // Base64
+                        try {
+                            byte[] decodedString = Base64.decode(q.getImage(), Base64.DEFAULT);
+                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                            if (decodedByte != null) {
+                                imgQuestion.setImageBitmap(decodedByte);
+                                imgQuestion.setVisibility(View.VISIBLE);
+                            } else {
+                                imgQuestion.setVisibility(View.GONE);
+                            }
+                        } catch (Exception e) {
+                            imgQuestion.setVisibility(View.GONE);
+                        }
+                    } else { // Resource Name
+                        int resId = getResources().getIdentifier(q.getImage().toLowerCase(), "drawable", getPackageName());
+                        if (resId != 0) {
+                            imgQuestion.setImageResource(resId);
+                            imgQuestion.setVisibility(View.VISIBLE);
+                        } else {
+                            imgQuestion.setVisibility(View.GONE);
+                        }
+                    }
+                } else {
+                    imgQuestion.setVisibility(View.GONE);
+                }
+            }
 
-            // Hide all specialized containers first
             findViewById(R.id.optionsGrid).setVisibility(View.GONE);
             findViewById(R.id.dragContainer).setVisibility(View.GONE);
             findViewById(R.id.matchingContainer).setVisibility(View.GONE);
@@ -297,7 +320,7 @@ public class ExamActivity extends AppCompatActivity {
         isAnswered = true;
         boolean isCorrect = false;
         if ("correct_matching".equals(selectedAnswer)) isCorrect = true;
-        else if (selectedAnswer.equals(correctAnswer)) {
+        else if (selectedAnswer != null && selectedAnswer.equals(correctAnswer)) {
             isCorrect = true;
             if (dropZone.getVisibility() == View.VISIBLE) txtDroppedValue.setText(selectedAnswer);
             if (comparisonContainer.getVisibility() == View.VISIBLE) txtDroppedCompare.setText(selectedAnswer);
@@ -305,8 +328,6 @@ public class ExamActivity extends AppCompatActivity {
 
         if (isCorrect) correctAnswersCount++;
         
-        // Trong bài thi, KHÔNG thông báo đúng sai ngay lập tức để tăng độ khó
-        // Và luôn tự động chuyển câu sau 0.5s
         txtQuestionText.postDelayed(() -> {
             currentQuestionIndex++;
             displayQuestion();
@@ -320,9 +341,8 @@ public class ExamActivity extends AppCompatActivity {
         Intent intent = new Intent(this, QuizResult.class);
         intent.putExtra("correct_count", correctAnswersCount);
         intent.putExtra("total_questions", questionList.size());
-        // Bài thi thưởng XP cực cao: 30 XP mỗi câu đúng
         intent.putExtra("xp_earned", correctAnswersCount * 30);
-        intent.putExtra("activity_id", -1); // Không ảnh hưởng tiến trình
+        intent.putExtra("activity_id", -1);
         startActivity(intent);
         finish();
     }

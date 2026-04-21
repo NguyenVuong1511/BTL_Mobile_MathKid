@@ -9,7 +9,7 @@ import com.example.mathkid.database.DatabaseContract.*;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "MathKid.db";
-    private static final int DATABASE_VERSION = 8; // Nâng cấp lên 8 để cập nhật logic thành tích
+    private static final int DATABASE_VERSION = 9; // Nâng cấp version để thực hiện seeding mới
 
     private static final String SQL_CREATE_USERS =
             "CREATE TABLE " + UserEntry.TABLE_NAME + " (" +
@@ -96,6 +96,50 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_QUESTIONS);
         db.execSQL(SQL_CREATE_PROGRESS);
         seedAchievements(db);
+        seedInitialData(db);
+    }
+
+    private void seedInitialData(SQLiteDatabase db) {
+        // 1. Thêm Topic
+        ContentValues topicValues = new ContentValues();
+        topicValues.put(TopicEntry.COLUMN_TITLE, "Toán Cơ Bản");
+        topicValues.put(TopicEntry.COLUMN_INDEX, 1);
+        long topicId = db.insert(TopicEntry.TABLE_NAME, null, topicValues);
+
+        // 2. Thêm Bài học (Activities)
+        long act1 = addActivity(db, topicId, "Bé tập đếm 1-5", "quiz", 50, 0, 1);
+        long act2 = addActivity(db, topicId, "So sánh Lớn - Bé", "comparison", 60, 1, 2);
+
+        // 3. Thêm Câu hỏi mẫu cho Bài 1 (Quiz)
+        addQuestion(db, act1, "quiz", "Có bao nhiêu chú Gấu Trúc?", "panda", "1", "[\"1\", \"2\", \"3\", \"4\"]");
+        addQuestion(db, act1, "quiz", "Đếm xem có bao nhiêu chú Thỏ?", "rabbit", "3", "[\"2\", \"3\", \"5\", \"1\"]");
+        addQuestion(db, act1, "quiz", "Có bao nhiêu chú Chó ở đây?", "dog", "2", "[\"1\", \"2\", \"4\", \"3\"]");
+
+        // 4. Thêm Câu hỏi mẫu cho Bài 2 (So sánh - Comparison)
+        addQuestion(db, act2, "comparison", "Số nào lớn hơn?", null, ">", "[\"5\", \"3\"]");
+        addQuestion(db, act2, "comparison", "Số nào bé hơn?", null, "<", "[\"2\", \"8\"]");
+    }
+
+    private long addActivity(SQLiteDatabase db, long topicId, String title, String type, int xp, int locked, int index) {
+        ContentValues cv = new ContentValues();
+        cv.put(ActivitiesEntry.COLUMN_TOPIC_ID, topicId);
+        cv.put(ActivitiesEntry.COLUMN_TITLE, title);
+        cv.put(ActivitiesEntry.COLUMN_GAME_TYPE, type);
+        cv.put(ActivitiesEntry.COLUMN_XP_REWARD, xp);
+        cv.put(ActivitiesEntry.COLUMN_IS_LOCKED, locked);
+        cv.put(ActivitiesEntry.COLUMN_ORDER_INDEX, index);
+        return db.insert(ActivitiesEntry.TABLE_NAME, null, cv);
+    }
+
+    private void addQuestion(SQLiteDatabase db, long actId, String type, String text, String img, String ans, String optJson) {
+        ContentValues cv = new ContentValues();
+        cv.put(QuestionsEntry.COLUMN_ACTIVITY_ID, actId);
+        cv.put(QuestionsEntry.COLUMN_QUESTION_TYPE, type);
+        cv.put(QuestionsEntry.COLUMN_QUESTION_TEXT, text);
+        cv.put(QuestionsEntry.COLUMN_IMAGE, img);
+        cv.put(QuestionsEntry.COLUMN_ANSWER_TEXT, ans);
+        cv.put(QuestionsEntry.COLUMN_OPTION_JSON, optJson);
+        db.insert(QuestionsEntry.TABLE_NAME, null, cv);
     }
 
     private void seedAchievements(SQLiteDatabase db) {

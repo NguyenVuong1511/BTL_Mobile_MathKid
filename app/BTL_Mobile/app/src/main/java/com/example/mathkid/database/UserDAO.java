@@ -22,6 +22,13 @@ public class UserDAO {
 
     public UserDAO(Context context) {
         dbHelper = DatabaseHelper.getInstance(context);
+        // Vá lỗi: Đặt lại trạng thái khóa cho các bài học (trừ bài đầu tiên) nếu chúng đã bị mở khóa nhầm trên toàn hệ thống
+        try {
+            openWrite();
+            db.execSQL("UPDATE " + ActivitiesEntry.TABLE_NAME + " SET " + ActivitiesEntry.COLUMN_IS_LOCKED + " = 1 WHERE " + ActivitiesEntry.COLUMN_ORDER_INDEX + " > 1");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void openWrite() { db = dbHelper.getWritableDatabase(); }
@@ -380,17 +387,8 @@ public class UserDAO {
         cv.put(ProgressEntry.COLUMN_LAST_PLAYED, System.currentTimeMillis());
         db.replace(ProgressEntry.TABLE_NAME, null, cv);
 
-        if (isComplete) {
-            Cursor c = db.query(ActivitiesEntry.TABLE_NAME, new String[]{ActivitiesEntry.COLUMN_ORDER_INDEX},
-                    ActivitiesEntry._ID + "=?", new String[]{String.valueOf(activityId)}, null, null, null);
-            if (c.moveToFirst()) {
-                @SuppressLint("Range") int currentIndex = c.getInt(c.getColumnIndex(ActivitiesEntry.COLUMN_ORDER_INDEX));
-                db.execSQL("UPDATE " + ActivitiesEntry.TABLE_NAME + " SET " + 
-                    ActivitiesEntry.COLUMN_IS_LOCKED + " = 0 WHERE " + 
-                    ActivitiesEntry.COLUMN_ORDER_INDEX + " = " + (currentIndex + 1));
-            }
-            c.close();
-        }
+        // BỎ: Cập nhật global table ActivitiesEntry. 
+        // Logic mở khóa giờ đây được tính toán động theo từng user trong getLessonsWithProgress.
         
         updateTotalStars(userId);
         checkAndUnlockAchievements(userId);
@@ -416,22 +414,44 @@ public class UserDAO {
     public List<Lesson> getLessonsWithProgress(int userId) {
         openRead();
         List<Lesson> lessons = new ArrayList<>();
+        // Sắp xếp theo topic và thứ tự để logic mở khóa tuần tự hoạt động chính xác
         String sql = "SELECT a.*, p." + ProgressEntry.COLUMN_STARS_EARNED + ", p." + ProgressEntry.COLUMN_IS_COMPLETE + 
                      " FROM " + ActivitiesEntry.TABLE_NAME + " a " +
                      " LEFT JOIN " + ProgressEntry.TABLE_NAME + " p ON a." + ActivitiesEntry._ID + " = p." + ProgressEntry.COLUMN_ACTIVITY_ID + 
                      " AND p." + ProgressEntry.COLUMN_USER_ID + " = ?" +
-                     " ORDER BY a." + ActivitiesEntry.COLUMN_ORDER_INDEX + " ASC";
+                     " ORDER BY a." + ActivitiesEntry.COLUMN_TOPIC_ID + " ASC, a." + ActivitiesEntry.COLUMN_ORDER_INDEX + " ASC";
+        
         Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(userId)});
+        
+        boolean previousComplete = true; // Bài đầu tiên của mỗi topic mặc định được mở
+        int currentTopicId = -1;
+
         if (cursor.moveToFirst()) {
             do {
                 int id = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry._ID));
+                int topicId = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry.COLUMN_TOPIC_ID));
                 String title = cursor.getString(cursor.getColumnIndex(ActivitiesEntry.COLUMN_TITLE));
                 String icon = cursor.getString(cursor.getColumnIndex(ActivitiesEntry.COLUMN_GAME_TYPE));
                 int stars = cursor.getInt(cursor.getColumnIndex(ProgressEntry.COLUMN_STARS_EARNED));
-                boolean isLocked = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry.COLUMN_IS_LOCKED)) == 1;
+                int globalLocked = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry.COLUMN_IS_LOCKED));
                 boolean isComplete = cursor.getInt(cursor.getColumnIndex(ProgressEntry.COLUMN_IS_COMPLETE)) == 1;
                 int orderIndex = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry.COLUMN_ORDER_INDEX));
+
+                // Nếu chuyển chủ đề mới, reset trạng thái mở khóa cho bài đầu tiên
+                if (topicId != currentTopicId) {
+                    currentTopicId = topicId;
+                    previousComplete = true;
+                }
+
+                // Bài học bị khóa nếu: 
+                // 1. Admin đặt khóa mặc định (globalLocked == 1) 
+                // 2. VÀ bài học trước đó chưa hoàn thành (!previousComplete)
+                // Lưu ý: Nếu globalLocked == 0 thì luôn mở.
+                boolean isLocked = (globalLocked == 1) && !previousComplete;
+
                 lessons.add(new Lesson(id, title, icon, stars, isLocked, isComplete, orderIndex));
+                
+                previousComplete = isComplete;
             } while (cursor.moveToNext());
         }
         cursor.close();

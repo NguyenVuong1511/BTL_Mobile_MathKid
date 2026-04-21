@@ -4,13 +4,15 @@ import android.animation.ObjectAnimator;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.DragEvent;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -63,10 +65,11 @@ public class QuizActivity extends AppCompatActivity {
     private int correctAnswersCount = 0;
     private String correctAnswer;
     private int activityId;
+    private boolean isPreviewMode = false;
 
     private UserDAO userDAO;
     private boolean isAnswered = false;
-    private boolean currentQuestionFirstTry = true; 
+    private boolean currentQuestionFirstTry = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +78,7 @@ public class QuizActivity extends AppCompatActivity {
 
         userDAO = new UserDAO(this);
         activityId = getIntent().getIntExtra("activity_id", -1);
+        isPreviewMode = getIntent().getBooleanExtra("IS_PREVIEW", false);
 
         initViews();
         loadData();
@@ -90,7 +94,7 @@ public class QuizActivity extends AppCompatActivity {
         imgQuestion = findViewById(R.id.imgQuestion);
         btnExit = findViewById(R.id.btnExit);
 
-        // Quiz
+        // Quiz Options
         optionViews[0] = findViewById(R.id.option1);
         optionViews[1] = findViewById(R.id.option2);
         optionViews[2] = findViewById(R.id.option3);
@@ -99,9 +103,13 @@ public class QuizActivity extends AppCompatActivity {
         for (int i = 0; i < 4; i++) {
             final int index = i;
             if (optionViews[i] != null) {
-                optionTexts[i] = (TextView) ((android.view.ViewGroup) optionViews[i]).getChildAt(0);
+                View innerView = ((android.view.ViewGroup) optionViews[i]).getChildAt(0);
+                if (innerView instanceof TextView) {
+                    optionTexts[i] = (TextView) innerView;
+                }
                 optionViews[index].setOnClickListener(v -> {
-                    if (!isAnswered) checkAnswer(optionTexts[index].getText().toString());
+                    if (!isAnswered && optionTexts[index] != null) 
+                        checkAnswer(optionTexts[index].getText().toString());
                 });
             }
         }
@@ -131,7 +139,7 @@ public class QuizActivity extends AppCompatActivity {
                 case DragEvent.ACTION_DRAG_STARTED:
                     return event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN);
                 case DragEvent.ACTION_DRAG_ENTERED:
-                    v.animate().scaleX(1.2f).scaleY(1.2f).alpha(0.8f).setDuration(200).start();
+                    v.animate().scaleX(1.1f).scaleY(1.1f).alpha(0.7f).setDuration(200).start();
                     return true;
                 case DragEvent.ACTION_DRAG_EXITED:
                 case DragEvent.ACTION_DRAG_ENDED:
@@ -151,7 +159,20 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        if (activityId != -1) questionList = userDAO.getQuestions(activityId);
+        if (isPreviewMode) {
+            int previewId = getIntent().getIntExtra("PREVIEW_QUESTION_ID", -1);
+            List<Question> all = userDAO.getAllQuestions();
+            questionList = new ArrayList<>();
+            for (Question q : all) {
+                if (q.getId() == previewId) {
+                    questionList.add(q);
+                    break;
+                }
+            }
+        } else if (activityId != -1) {
+            questionList = userDAO.getQuestions(activityId);
+        }
+
         if (questionList == null || questionList.isEmpty()) {
             Toast.makeText(this, "Không có dữ liệu câu hỏi!", Toast.LENGTH_SHORT).show();
             finish();
@@ -160,32 +181,61 @@ public class QuizActivity extends AppCompatActivity {
 
     private void displayQuestion() {
         isAnswered = false;
-        currentQuestionFirstTry = true; 
-        
+        currentQuestionFirstTry = true;
+
         if (currentQuestionIndex < questionList.size()) {
             Question q = questionList.get(currentQuestionIndex);
-            
+
             int progress = (int) (((float) (currentQuestionIndex) / questionList.size()) * 100);
             if (quizProgressBar != null) {
                 ObjectAnimator.ofInt(quizProgressBar, "progress", quizProgressBar.getProgress(), progress).setDuration(600).start();
             }
 
-            if (txtQuestionIndex != null) txtQuestionIndex.setText((currentQuestionIndex + 1) + "/" + questionList.size());
+            if (txtQuestionIndex != null)
+                txtQuestionIndex.setText((currentQuestionIndex + 1) + "/" + questionList.size());
             if (txtQuestionText != null) txtQuestionText.setText(q.getText());
             correctAnswer = q.getAnswer();
 
+            // Xử lý hiển thị ảnh (Base64 hoặc Resource)
             if (imgQuestion != null) {
                 if (q.getImage() != null && !q.getImage().isEmpty()) {
-                    int resId = getResources().getIdentifier(q.getImage(), "drawable", getPackageName());
-                    imgQuestion.setImageResource(resId != 0 ? resId : R.drawable.panda);
-                    imgQuestion.setVisibility(View.VISIBLE);
-                } else imgQuestion.setVisibility(View.GONE);
+                    if (q.getImage().length() > 100) { // Giả định là chuỗi Base64
+                        try {
+                            byte[] decodedString = Base64.decode(q.getImage(), Base64.DEFAULT);
+                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                            if (decodedByte != null) {
+                                imgQuestion.setImageBitmap(decodedByte);
+                                imgQuestion.setVisibility(View.VISIBLE);
+                            } else {
+                                imgQuestion.setVisibility(View.GONE);
+                            }
+                        } catch (Exception e) {
+                            imgQuestion.setVisibility(View.GONE);
+                        }
+                    } else { // Giả định là tên Resource
+                        int resId = getResources().getIdentifier(q.getImage(), "drawable", getPackageName());
+                        imgQuestion.setImageResource(resId != 0 ? resId : R.drawable.panda);
+                        imgQuestion.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    imgQuestion.setVisibility(View.GONE);
+                }
             }
 
+            // Hiển thị layout tương ứng với loại câu hỏi
             if ("drag".equals(q.getType())) showDragLayout(q.getOptions());
             else if ("matching".equals(q.getType())) showMatchingLayout(q.getOptions());
             else if ("comparison".equals(q.getType())) showComparisonLayout(q.getOptions());
             else showQuizLayout(q.getOptions());
+        } else {
+            handleQuizFinish();
+        }
+    }
+
+    private void handleQuizFinish() {
+        if (isPreviewMode) {
+            Toast.makeText(this, "Kết thúc xem trước!", Toast.LENGTH_SHORT).show();
+            finish();
         } else {
             if (quizProgressBar != null) quizProgressBar.setProgress(100);
             Intent intent = new Intent(this, QuizResult.class);
@@ -199,18 +249,12 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void showQuizLayout(List<String> options) {
-        View grid = findViewById(R.id.optionsGrid);
-        if (grid != null) grid.setVisibility(View.VISIBLE);
-        if (dragContainer != null) dragContainer.setVisibility(View.GONE);
-        View matchingContainer = findViewById(R.id.matchingContainer);
-        if (matchingContainer != null) matchingContainer.setVisibility(View.GONE);
-        if (comparisonContainer != null) comparisonContainer.setVisibility(View.GONE);
-        if (dropZone != null) dropZone.setVisibility(View.GONE);
-        
+        setAllLayoutsInvisible();
+        findViewById(R.id.optionsGrid).setVisibility(View.VISIBLE);
         for (int i = 0; i < 4; i++) {
             if (optionViews[i] != null) {
                 if (options != null && i < options.size()) {
-                    optionTexts[i].setText(options.get(i));
+                    if (optionTexts[i] != null) optionTexts[i].setText(options.get(i));
                     optionViews[i].setVisibility(View.VISIBLE);
                 } else optionViews[i].setVisibility(View.GONE);
             }
@@ -218,18 +262,9 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void showDragLayout(List<String> options) {
-        View grid = findViewById(R.id.optionsGrid);
-        if (grid != null) grid.setVisibility(View.GONE);
-        if (dragContainer != null) dragContainer.setVisibility(View.VISIBLE);
-        View matchingContainer = findViewById(R.id.matchingContainer);
-        if (matchingContainer != null) matchingContainer.setVisibility(View.GONE);
-        if (comparisonContainer != null) comparisonContainer.setVisibility(View.GONE);
-        if (dropZone != null) {
-            dropZone.setVisibility(View.VISIBLE);
-            if (txtDroppedValue != null) txtDroppedValue.setText("?");
-        }
-        
+        setAllLayoutsInvisible();
         if (dragContainer != null) {
+            dragContainer.setVisibility(View.VISIBLE);
             dragContainer.removeAllViews();
             if (options != null) {
                 for (String option : options) {
@@ -248,26 +283,23 @@ public class QuizActivity extends AppCompatActivity {
                 }
             }
         }
+        if (dropZone != null) {
+            dropZone.setVisibility(View.VISIBLE);
+            if (txtDroppedValue != null) txtDroppedValue.setText("?");
+        }
     }
 
     private void showMatchingLayout(List<String> optionsJson) {
-        View grid = findViewById(R.id.optionsGrid);
-        if (grid != null) grid.setVisibility(View.GONE);
-        if (dragContainer != null) dragContainer.setVisibility(View.GONE);
+        setAllLayoutsInvisible();
         View matchingContainer = findViewById(R.id.matchingContainer);
         if (matchingContainer != null) matchingContainer.setVisibility(View.VISIBLE);
-        if (comparisonContainer != null) comparisonContainer.setVisibility(View.GONE);
-        if (dropZone != null) dropZone.setVisibility(View.GONE);
-        
         if (layoutMatchingPairs != null) {
             layoutMatchingPairs.removeAllViews();
             matchingData.clear();
             matchingCorrectCount = 0;
             selectedLeftView = null;
-
             List<String> leftItems = new ArrayList<>();
             List<String> rightItems = new ArrayList<>();
-
             try {
                 if (optionsJson != null && !optionsJson.isEmpty()) {
                     JSONArray arr = new JSONArray(optionsJson.get(0));
@@ -282,32 +314,26 @@ public class QuizActivity extends AppCompatActivity {
                     }
                 }
             } catch (Exception e) { e.printStackTrace(); }
-
             Collections.shuffle(rightItems);
-
             for (int i = 0; i < leftItems.size(); i++) {
                 View view = LayoutInflater.from(this).inflate(R.layout.item_matching_pair, layoutMatchingPairs, false);
                 TextView txtL = view.findViewById(R.id.txtLeft);
                 TextView txtR = view.findViewById(R.id.txtRight);
                 View cardL = view.findViewById(R.id.leftItem);
                 View cardR = view.findViewById(R.id.rightItem);
-
                 txtL.setText(leftItems.get(i));
                 txtR.setText(rightItems.get(i));
-
                 final String lVal = leftItems.get(i);
                 final String rVal = rightItems.get(i);
-
                 cardL.setOnClickListener(v -> {
                     if (selectedLeftView != null) selectedLeftView.setAlpha(1.0f);
                     selectedLeftView = v;
                     selectedLeftValue = lVal;
                     v.setAlpha(0.5f);
                 });
-
                 cardR.setOnClickListener(v -> {
                     if (selectedLeftView == null) {
-                        Toast.makeText(this, "Hãy chọn ô bên trái trước!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Chọn ô bên trái trước!", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (matchingData.get(selectedLeftValue).equals(rVal)) {
@@ -317,10 +343,10 @@ public class QuizActivity extends AppCompatActivity {
                         matchingCorrectCount++;
                         if (matchingCorrectCount == matchingData.size()) checkAnswer("correct_matching");
                     } else {
-                        Toast.makeText(this, "Sai rồi, thử lại nhé!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Chưa đúng, thử lại nhé!", Toast.LENGTH_SHORT).show();
                         selectedLeftView.setAlpha(1.0f);
                         selectedLeftView = null;
-                        currentQuestionFirstTry = false; 
+                        currentQuestionFirstTry = false;
                     }
                 });
                 layoutMatchingPairs.addView(view);
@@ -329,11 +355,7 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void showComparisonLayout(List<String> options) {
-        View grid = findViewById(R.id.optionsGrid);
-        if (grid != null) grid.setVisibility(View.GONE);
-        if (dragContainer != null) dragContainer.setVisibility(View.GONE);
-        View matchingContainer = findViewById(R.id.matchingContainer);
-        if (matchingContainer != null) matchingContainer.setVisibility(View.GONE);
+        setAllLayoutsInvisible();
         if (comparisonContainer != null) {
             comparisonContainer.setVisibility(View.VISIBLE);
             if (txtDroppedCompare != null) txtDroppedCompare.setText("?");
@@ -342,8 +364,6 @@ public class QuizActivity extends AppCompatActivity {
                 if (txtCompareRight != null) txtCompareRight.setText(options.get(1));
             }
         }
-        if (dropZone != null) dropZone.setVisibility(View.GONE);
-
         if (compareDragArea != null) {
             compareDragArea.removeAllViews();
             String[] signs = {">", "<", "="};
@@ -352,7 +372,6 @@ public class QuizActivity extends AppCompatActivity {
                 TextView txtSign = view.findViewById(R.id.txtDragOption);
                 txtSign.setText(sign);
                 txtSign.setTextSize(32);
-
                 view.setOnTouchListener((v, event) -> {
                     if (event.getAction() == MotionEvent.ACTION_DOWN && !isAnswered) {
                         v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
@@ -367,26 +386,25 @@ public class QuizActivity extends AppCompatActivity {
         }
     }
 
+    private void setAllLayoutsInvisible() {
+        findViewById(R.id.optionsGrid).setVisibility(View.GONE);
+        if (dragContainer != null) dragContainer.setVisibility(View.GONE);
+        if (findViewById(R.id.matchingContainer) != null) findViewById(R.id.matchingContainer).setVisibility(View.GONE);
+        if (comparisonContainer != null) comparisonContainer.setVisibility(View.GONE);
+        if (dropZone != null) dropZone.setVisibility(View.GONE);
+    }
+
     private void checkAnswer(String selectedAnswer) {
         if (isAnswered) return;
-        
-        boolean isCorrect = false;
-        if ("correct_matching".equals(selectedAnswer)) isCorrect = true;
-        else if (selectedAnswer != null && selectedAnswer.equals(correctAnswer)) isCorrect = true;
-
+        boolean isCorrect = "correct_matching".equals(selectedAnswer) || (selectedAnswer != null && selectedAnswer.equals(correctAnswer));
         if (isCorrect) {
-            if (currentQuestionFirstTry) {
-                correctAnswersCount++;
-            }
-            
-            if (dropZone != null && dropZone.getVisibility() == View.VISIBLE && txtDroppedValue != null) 
+            if (currentQuestionFirstTry) correctAnswersCount++;
+            if (dropZone != null && dropZone.getVisibility() == View.VISIBLE && txtDroppedValue != null)
                 txtDroppedValue.setText(selectedAnswer);
-            if (comparisonContainer != null && comparisonContainer.getVisibility() == View.VISIBLE && txtDroppedCompare != null) 
+            if (comparisonContainer != null && comparisonContainer.getVisibility() == View.VISIBLE && txtDroppedCompare != null)
                 txtDroppedCompare.setText(selectedAnswer);
-
             Toast.makeText(this, "Chính xác! ✨", Toast.LENGTH_SHORT).show();
-            isAnswered = true; 
-            
+            isAnswered = true;
             if (txtQuestionText != null) {
                 txtQuestionText.postDelayed(() -> {
                     currentQuestionIndex++;
@@ -394,13 +412,8 @@ public class QuizActivity extends AppCompatActivity {
                 }, 1000);
             }
         } else {
-            Toast.makeText(this, "Chưa đúng rồi, bé thử lại nhé! ❤️", Toast.LENGTH_SHORT).show();
-            currentQuestionFirstTry = false; 
-            
-            if (dropZone != null && dropZone.getVisibility() == View.VISIBLE && txtDroppedValue != null) 
-                txtDroppedValue.setText("?");
-            if (comparisonContainer != null && comparisonContainer.getVisibility() == View.VISIBLE && txtDroppedCompare != null) 
-                txtDroppedCompare.setText("?");
+            Toast.makeText(this, "Bé thử lại nhé! ❤️", Toast.LENGTH_SHORT).show();
+            currentQuestionFirstTry = false;
         }
     }
 }

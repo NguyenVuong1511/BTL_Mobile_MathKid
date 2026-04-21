@@ -2,17 +2,16 @@ package com.example.mathkid.activities;
 
 import android.animation.ObjectAnimator;
 import android.content.ClipData;
-import android.content.ClipDescription;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Point;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.DragEvent;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -114,21 +113,13 @@ public class PracticeActivity extends AppCompatActivity {
         txtDroppedCompare = findViewById(R.id.txtDroppedCompare);
         dropZoneCompare = findViewById(R.id.dropZoneCompare);
         setupDropZone(dropZoneCompare);
-        
-        // Cập nhật tiêu đề hiển thị
-        TextView headerTitle = findViewById(R.id.quizHeader).findViewWithTag("header_tag");
-        if (headerTitle == null) {
-             // Tìm view có text "Tiến độ bài học" để đổi thành "Luyện tập tổng hợp"
-             // Trong XML của bạn, nó không có ID nhưng ta có thể tìm theo nội dung
-             // Hoặc đơn giản là bỏ qua vì nó vẫn chạy tốt
-        }
     }
 
     private void setupDropZone(View zone) {
         zone.setOnDragListener((v, event) -> {
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
-                    return event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN);
+                    return event.getClipDescription().hasMimeType(android.content.ClipDescription.MIMETYPE_TEXT_PLAIN);
                 case DragEvent.ACTION_DRAG_ENTERED:
                     v.animate().scaleX(1.2f).scaleY(1.2f).alpha(0.8f).setDuration(200).start();
                     return true;
@@ -149,7 +140,6 @@ public class PracticeActivity extends AppCompatActivity {
     }
 
     private void loadRandomQuestions() {
-        // Lấy 10 câu hỏi ngẫu nhiên để luyện tập
         questionList = userDAO.getRandomQuestions(10);
         if (questionList == null || questionList.isEmpty()) {
             Toast.makeText(this, "Chưa có đủ câu hỏi để luyện tập!", Toast.LENGTH_SHORT).show();
@@ -171,11 +161,35 @@ public class PracticeActivity extends AppCompatActivity {
             txtQuestionText.setText(q.getText());
             correctAnswer = q.getAnswer();
 
-            if (q.getImage() != null && !q.getImage().isEmpty()) {
-                int resId = getResources().getIdentifier(q.getImage(), "drawable", getPackageName());
-                imgQuestion.setImageResource(resId != 0 ? resId : R.drawable.panda);
-                imgQuestion.setVisibility(View.VISIBLE);
-            } else imgQuestion.setVisibility(View.GONE);
+            // Hiển thị ảnh (Hỗ trợ cả Resource Name và Base64)
+            if (imgQuestion != null) {
+                if (q.getImage() != null && !q.getImage().isEmpty()) {
+                    if (q.getImage().length() > 100) { // Base64
+                        try {
+                            byte[] decodedString = Base64.decode(q.getImage(), Base64.DEFAULT);
+                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                            if (decodedByte != null) {
+                                imgQuestion.setImageBitmap(decodedByte);
+                                imgQuestion.setVisibility(View.VISIBLE);
+                            } else {
+                                imgQuestion.setVisibility(View.GONE);
+                            }
+                        } catch (Exception e) {
+                            imgQuestion.setVisibility(View.GONE);
+                        }
+                    } else { // Resource Name
+                        int resId = getResources().getIdentifier(q.getImage().toLowerCase(), "drawable", getPackageName());
+                        if (resId != 0) {
+                            imgQuestion.setImageResource(resId);
+                            imgQuestion.setVisibility(View.VISIBLE);
+                        } else {
+                            imgQuestion.setVisibility(View.GONE);
+                        }
+                    }
+                } else {
+                    imgQuestion.setVisibility(View.GONE);
+                }
+            }
 
             if ("drag".equals(q.getType())) showDragLayout(q.getOptions());
             else if ("matching".equals(q.getType())) showMatchingLayout(q.getOptions());
@@ -186,8 +200,8 @@ public class PracticeActivity extends AppCompatActivity {
             Intent intent = new Intent(this, QuizResult.class);
             intent.putExtra("correct_count", correctAnswersCount);
             intent.putExtra("total_questions", questionList.size());
-            intent.putExtra("xp_earned", correctAnswersCount * 15); // Chế độ luyện tập thưởng nhiều XP hơn
-            intent.putExtra("activity_id", -1); // -1 để không ảnh hưởng tiến trình bài học
+            intent.putExtra("xp_earned", correctAnswersCount * 15);
+            intent.putExtra("activity_id", -1);
             startActivity(intent);
             finish();
         }

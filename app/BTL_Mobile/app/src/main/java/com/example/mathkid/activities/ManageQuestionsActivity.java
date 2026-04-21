@@ -39,7 +39,6 @@ public class ManageQuestionsActivity extends AppCompatActivity {
         ImageView btnAddQuestion = findViewById(R.id.btnAddQuestion);
         TextView txtTitle = findViewById(R.id.txtTitle);
 
-        // Get filter from intent
         filterActivityId = getIntent().getIntExtra("ACTIVITY_ID", -1);
         String activityTitle = getIntent().getStringExtra("ACTIVITY_TITLE");
 
@@ -97,6 +96,23 @@ public class ManageQuestionsActivity extends AppCompatActivity {
             holder.txtType.setText(question.getType());
             holder.txtAnswer.setText("Đáp án: " + question.getAnswer());
 
+            // 1. CHỨC NĂNG SỬA CÂU HỎI
+            holder.btnEdit.setOnClickListener(v -> {
+                Intent intent = new Intent(ManageQuestionsActivity.this, AddQuestionActivity.class);
+                intent.putExtra("edit_question_id", question.getId());
+                startActivity(intent);
+            });
+
+            // 2. CHỨC NĂNG XEM TRƯỚC (QUAN TRƯỚC: MỞ QUIZACTIVITY)
+            holder.btnPreview.setOnClickListener(v -> {
+                Intent intent = new Intent(ManageQuestionsActivity.this, QuizActivity.class);
+                intent.putExtra("IS_PREVIEW", true);
+                intent.putExtra("PREVIEW_QUESTION_ID", question.getId());
+                intent.putExtra("activity_id", question.getActivityId());
+                startActivity(intent);
+            });
+
+            // 3. CHỨC NĂNG XÓA
             holder.btnDelete.setOnClickListener(v -> {
                 new AlertDialog.Builder(ManageQuestionsActivity.this)
                         .setTitle("Xóa câu hỏi")
@@ -118,11 +134,13 @@ public class ManageQuestionsActivity extends AppCompatActivity {
         }
 
         class QuestionViewHolder extends RecyclerView.ViewHolder {
-            ImageView btnDelete;
+            ImageView btnEdit, btnDelete, btnPreview;
             TextView txtQuestionText, txtType, txtAnswer;
 
             public QuestionViewHolder(@NonNull View itemView) {
                 super(itemView);
+                btnPreview = itemView.findViewById(R.id.btnPreview);
+                btnEdit = itemView.findViewById(R.id.btnEdit);
                 btnDelete = itemView.findViewById(R.id.btnDelete);
                 txtQuestionText = itemView.findViewById(R.id.txtQuestionText);
                 txtType = itemView.findViewById(R.id.txtType);
