@@ -26,6 +26,7 @@ public class ManageQuestionsActivity extends AppCompatActivity {
     private RecyclerView rvQuestions;
     private UserDAO userDAO;
     private QuestionAdapter adapter;
+    private int filterActivityId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +37,23 @@ public class ManageQuestionsActivity extends AppCompatActivity {
         rvQuestions = findViewById(R.id.rvQuestions);
         ImageView btnBack = findViewById(R.id.btnBack);
         ImageView btnAddQuestion = findViewById(R.id.btnAddQuestion);
+        TextView txtTitle = findViewById(R.id.txtTitle);
+
+        // Get filter from intent
+        filterActivityId = getIntent().getIntExtra("ACTIVITY_ID", -1);
+        String activityTitle = getIntent().getStringExtra("ACTIVITY_TITLE");
+
+        if (filterActivityId != -1 && activityTitle != null) {
+            txtTitle.setText("Câu hỏi: " + activityTitle);
+        }
 
         btnBack.setOnClickListener(v -> finish());
         btnAddQuestion.setOnClickListener(v -> {
-            startActivity(new Intent(this, AddQuestionActivity.class));
+            Intent intent = new Intent(this, AddQuestionActivity.class);
+            if (filterActivityId != -1) {
+                intent.putExtra("PRESET_ACTIVITY_ID", filterActivityId);
+            }
+            startActivity(intent);
         });
 
         rvQuestions.setLayoutManager(new LinearLayoutManager(this));
@@ -52,7 +66,12 @@ public class ManageQuestionsActivity extends AppCompatActivity {
     }
 
     private void loadQuestions() {
-        List<Question> questions = userDAO.getAllQuestions();
+        List<Question> questions;
+        if (filterActivityId != -1) {
+            questions = userDAO.getQuestions(filterActivityId);
+        } else {
+            questions = userDAO.getAllQuestions();
+        }
         adapter = new QuestionAdapter(questions);
         rvQuestions.setAdapter(adapter);
     }

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tên cấp độ:"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/edtLevelTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ví dụ: Làm quen số 1-5"
+        android:inputType="text" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Loại trò chơi:"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/spGameType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Thứ tự hiển thị:"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/edtOrderIndex"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ví dụ: 1, 2, 3..."
+        android:inputType="number" />
+
+</LinearLayout>

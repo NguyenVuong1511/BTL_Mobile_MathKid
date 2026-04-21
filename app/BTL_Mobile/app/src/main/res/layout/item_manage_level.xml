@@ -20,7 +20,7 @@
             android:textColor="#333333"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/btnEdit"
+            app:layout_constraintEnd_toStartOf="@+id/btnViewQuestions"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,6 +49,18 @@
             app:layout_constraintBottom_toBottomOf="@id/txtType"
             app:layout_constraintStart_toEndOf="@id/txtType"
             app:layout_constraintTop_toTopOf="@id/txtType" />
+
+        <ImageView
+            android:id="@+id/btnViewQuestions"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="8dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_book"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnEdit"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#2196F3" />
 
         <ImageView
             android:id="@+id/btnEdit"

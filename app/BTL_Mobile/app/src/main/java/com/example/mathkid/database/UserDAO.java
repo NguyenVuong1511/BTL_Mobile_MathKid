@@ -169,6 +169,39 @@ public class UserDAO {
         return list;
     }
 
+    @SuppressLint("Range")
+    public List<Question> getUnassignedQuestions() {
+        openRead();
+        List<Question> list = new ArrayList<>();
+        Cursor cursor = db.query(QuestionsEntry.TABLE_NAME, null, 
+                QuestionsEntry.COLUMN_ACTIVITY_ID + " <= 0", null, null, null, QuestionsEntry._ID + " DESC");
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndex(QuestionsEntry._ID));
+                int activityId = cursor.getInt(cursor.getColumnIndex(QuestionsEntry.COLUMN_ACTIVITY_ID));
+                String type = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_QUESTION_TYPE));
+                String text = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_QUESTION_TEXT));
+                String image = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_IMAGE));
+                String answer = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_ANSWER_TEXT));
+                String optionsJson = cursor.getString(cursor.getColumnIndex(QuestionsEntry.COLUMN_OPTION_JSON));
+                
+                List<String> options = new ArrayList<>();
+                try {
+                    if (optionsJson != null && !optionsJson.isEmpty()) {
+                        JSONArray jsonArray = new JSONArray(optionsJson);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            options.add(jsonArray.getString(i));
+                        }
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+                
+                list.add(new Question(id, activityId, type, text, null, image, answer, options));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
     public boolean addQuestion(int activityId, String type, String text, String image, String answer, String optionsJson) {
         openWrite();
         ContentValues cv = new ContentValues();
@@ -207,11 +240,66 @@ public class UserDAO {
             do {
                 int id = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry._ID));
                 String title = cursor.getString(cursor.getColumnIndex(ActivitiesEntry.COLUMN_TITLE));
-                lessons.add(new Lesson(id, title, "", 0, false, false, 0));
+                String gameType = cursor.getString(cursor.getColumnIndex(ActivitiesEntry.COLUMN_GAME_TYPE));
+                int orderIndex = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry.COLUMN_ORDER_INDEX));
+                lessons.add(new Lesson(id, title, gameType, 0, false, false, orderIndex));
             } while (cursor.moveToNext());
         }
         cursor.close();
         return lessons;
+    }
+
+    public long addActivityAdmin(String title, String type, int orderIndex) {
+        openWrite();
+        ContentValues cv = new ContentValues();
+        cv.put(ActivitiesEntry.COLUMN_TITLE, title);
+        cv.put(ActivitiesEntry.COLUMN_GAME_TYPE, type);
+        cv.put(ActivitiesEntry.COLUMN_ORDER_INDEX, orderIndex);
+        cv.put(ActivitiesEntry.COLUMN_TOPIC_ID, 1);
+        cv.put(ActivitiesEntry.COLUMN_IS_LOCKED, 1);
+        cv.put(ActivitiesEntry.COLUMN_XP_REWARD, 50);
+        return db.insert(ActivitiesEntry.TABLE_NAME, null, cv);
+    }
+
+    public boolean updateActivityAdmin(int id, String title, String type, int orderIndex) {
+        openWrite();
+        ContentValues cv = new ContentValues();
+        cv.put(ActivitiesEntry.COLUMN_TITLE, title);
+        cv.put(ActivitiesEntry.COLUMN_GAME_TYPE, type);
+        cv.put(ActivitiesEntry.COLUMN_ORDER_INDEX, orderIndex);
+        return db.update(ActivitiesEntry.TABLE_NAME, cv, ActivitiesEntry._ID + "=?", new String[]{String.valueOf(id)}) > 0;
+    }
+
+    public boolean deleteActivityAdmin(int id) {
+        openWrite();
+        ContentValues cv = new ContentValues();
+        cv.put(QuestionsEntry.COLUMN_ACTIVITY_ID, 0);
+        db.update(QuestionsEntry.TABLE_NAME, cv, QuestionsEntry.COLUMN_ACTIVITY_ID + "=?", new String[]{String.valueOf(id)});
+        db.delete(ProgressEntry.TABLE_NAME, ProgressEntry.COLUMN_ACTIVITY_ID + "=?", new String[]{String.valueOf(id)});
+        return db.delete(ActivitiesEntry.TABLE_NAME, ActivitiesEntry._ID + "=?", new String[]{String.valueOf(id)}) > 0;
+    }
+
+    public boolean updateQuestionsForActivity(int activityId, List<Integer> selectedQuestionIds) {
+        openWrite();
+        db.beginTransaction();
+        try {
+            ContentValues unassignCv = new ContentValues();
+            unassignCv.put(QuestionsEntry.COLUMN_ACTIVITY_ID, 0);
+            db.update(QuestionsEntry.TABLE_NAME, unassignCv, QuestionsEntry.COLUMN_ACTIVITY_ID + "=?", new String[]{String.valueOf(activityId)});
+
+            ContentValues assignCv = new ContentValues();
+            assignCv.put(QuestionsEntry.COLUMN_ACTIVITY_ID, activityId);
+            for (int qId : selectedQuestionIds) {
+                db.update(QuestionsEntry.TABLE_NAME, assignCv, QuestionsEntry._ID + "=?", new String[]{String.valueOf(qId)});
+            }
+            db.setTransactionSuccessful();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            db.endTransaction();
+        }
     }
 
     @SuppressLint("Range")
@@ -325,31 +413,52 @@ public class UserDAO {
     }
 
     @SuppressLint("Range")
+    public List<Lesson> getLessonsWithProgress(int userId) {
+        openRead();
+        List<Lesson> lessons = new ArrayList<>();
+        String sql = "SELECT a.*, p." + ProgressEntry.COLUMN_STARS_EARNED + ", p." + ProgressEntry.COLUMN_IS_COMPLETE + 
+                     " FROM " + ActivitiesEntry.TABLE_NAME + " a " +
+                     " LEFT JOIN " + ProgressEntry.TABLE_NAME + " p ON a." + ActivitiesEntry._ID + " = p." + ProgressEntry.COLUMN_ACTIVITY_ID + 
+                     " AND p." + ProgressEntry.COLUMN_USER_ID + " = ?" +
+                     " ORDER BY a." + ActivitiesEntry.COLUMN_ORDER_INDEX + " ASC";
+        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(userId)});
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry._ID));
+                String title = cursor.getString(cursor.getColumnIndex(ActivitiesEntry.COLUMN_TITLE));
+                String icon = cursor.getString(cursor.getColumnIndex(ActivitiesEntry.COLUMN_GAME_TYPE));
+                int stars = cursor.getInt(cursor.getColumnIndex(ProgressEntry.COLUMN_STARS_EARNED));
+                boolean isLocked = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry.COLUMN_IS_LOCKED)) == 1;
+                boolean isComplete = cursor.getInt(cursor.getColumnIndex(ProgressEntry.COLUMN_IS_COMPLETE)) == 1;
+                int orderIndex = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry.COLUMN_ORDER_INDEX));
+                lessons.add(new Lesson(id, title, icon, stars, isLocked, isComplete, orderIndex));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return lessons;
+    }
+
+    @SuppressLint("Range")
     public ProgressSummary getUserProgressSummary(int userId) {
         openRead();
         ProgressSummary summary = new ProgressSummary();
         summary.topicStats = new ArrayList<>();
         
         try {
-            // 1. Tổng số bài học
             Cursor c1 = db.rawQuery("SELECT COUNT(*) FROM " + ActivitiesEntry.TABLE_NAME, null);
             if (c1.moveToFirst()) summary.totalActivities = c1.getInt(0);
             c1.close();
             
-            // 2. Bài đã hoàn thành
             Cursor c2 = db.rawQuery("SELECT COUNT(*) FROM " + ProgressEntry.TABLE_NAME + " WHERE " + ProgressEntry.COLUMN_USER_ID + " = ? AND " + ProgressEntry.COLUMN_IS_COMPLETE + " = 1", new String[]{String.valueOf(userId)});
             if (c2.moveToFirst()) summary.completedActivities = c2.getInt(0);
             c2.close();
             
-            // 3. Tổng số sao có thể đạt (mỗi bài tối đa 3 sao)
             summary.totalStarsPossible = summary.totalActivities * 3;
             
-            // 4. Tổng số sao hiện tại
             Cursor c3 = db.rawQuery("SELECT SUM(" + ProgressEntry.COLUMN_STARS_EARNED + ") FROM " + ProgressEntry.TABLE_NAME + " WHERE " + ProgressEntry.COLUMN_USER_ID + " = ?", new String[]{String.valueOf(userId)});
             if (c3.moveToFirst()) summary.totalStarsEarned = c3.getInt(0);
             c3.close();
-            
-            // 5. Thống kê theo chủ đề
+
             String sqlTopic = "SELECT t." + TopicEntry.COLUMN_TITLE + ", COUNT(a." + ActivitiesEntry._ID + ") as total, " +
                     "SUM(CASE WHEN p." + ProgressEntry.COLUMN_IS_COMPLETE + " = 1 THEN 1 ELSE 0 END) as done " +
                     "FROM " + TopicEntry.TABLE_NAME + " t " +
@@ -422,136 +531,6 @@ public class UserDAO {
     }
 
     @SuppressLint("Range")
-    public List<Lesson> getLessonsWithProgress(int userId) {
-        openRead();
-        List<Lesson> lessons = new ArrayList<>();
-        String sql = "SELECT a.*, p." + ProgressEntry.COLUMN_STARS_EARNED + ", p." + ProgressEntry.COLUMN_IS_COMPLETE + 
-                     " FROM " + ActivitiesEntry.TABLE_NAME + " a " +
-                     " LEFT JOIN " + ProgressEntry.TABLE_NAME + " p ON a." + ActivitiesEntry._ID + " = p." + ProgressEntry.COLUMN_ACTIVITY_ID + 
-                     " AND p." + ProgressEntry.COLUMN_USER_ID + " = ?" +
-                     " ORDER BY a." + ActivitiesEntry.COLUMN_ORDER_INDEX + " ASC";
-        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(userId)});
-        if (cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry._ID));
-                String title = cursor.getString(cursor.getColumnIndex(ActivitiesEntry.COLUMN_TITLE));
-                String icon = cursor.getString(cursor.getColumnIndex(ActivitiesEntry.COLUMN_GAME_TYPE));
-                int stars = cursor.getInt(cursor.getColumnIndex(ProgressEntry.COLUMN_STARS_EARNED));
-                boolean isLocked = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry.COLUMN_IS_LOCKED)) == 1;
-                boolean isComplete = cursor.getInt(cursor.getColumnIndex(ProgressEntry.COLUMN_IS_COMPLETE)) == 1;
-                lessons.add(new Lesson(id, title, icon, stars, isLocked, isComplete, 0));
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return lessons;
-    }
-
-    public void seedDataIfNeeded() {
-        openRead();
-        Cursor cursor = db.query(ActivitiesEntry.TABLE_NAME, null, null, null, null, null, null);
-        if (cursor.getCount() == 0) {
-            openWrite();
-            
-            // Thêm topic mẫu nếu chưa có
-            ContentValues tc = new ContentValues();
-            tc.put(TopicEntry.COLUMN_TITLE, "Toán cơ bản");
-            tc.put(TopicEntry.COLUMN_INDEX, 1);
-            long topicId = db.insert(TopicEntry.TABLE_NAME, null, tc);
-
-            // Bài 1: Làm quen số 1-5
-            long act1 = addActivity((int)topicId, "Làm quen số 1-5", "quiz", 50, 0, 1);
-            addQuestion((int)act1, "Có bao nhiêu Gấu Trúc nào?", "panda", "1", "[\"1\", \"2\", \"3\", \"5\"]");
-            addQuestion((int)act1, "Đếm xem có bao nhiêu Chú Thỏ?", "rabbit", "3", "[\"2\", \"3\", \"4\", \"1\"]");
-            addQuestion((int)act1, "Có mấy Chú Chó ở đây nhỉ?", "dog", "2", "[\"1\", \"2\", \"4\", \"3\"]");
-
-            // Bài 2: Bé tập đếm đến 10
-            long act2 = addActivity((int)topicId, "Bé tập đếm đến 10", "quiz", 60, 1, 2);
-            addQuestion((int)act2, "Số 'Bảy' viết như thế nào?", "fox", "7", "[\"5\", \"6\", \"7\", \"8\"]");
-            addQuestion((int)act2, "Đâu là số 'Mười'?", "panda", "10", "[\"1\", \"0\", \"10\", \"100\"]");
-
-            // Bài 3: So sánh Lớn - Bé
-            long act3 = addActivity((int)topicId, "So sánh Lớn - Bé", "quiz", 70, 1, 3);
-            addQuestion((int)act3, "3 quả táo so với 5 quả táo thì bên nào ÍT hơn?", "cat", "3", "[\"3\", \"5\", \"Bằng nhau\"]");
-            addQuestion((int)act3, "Số nào LỚN hơn trong hai số này?", "pig", "9", "[\"4\", \"9\", \"7\"]");
-
-            // Bài 4: Phép cộng vui nhộn
-            long act4 = addActivity((int)topicId, "Phép cộng vui nhộn", "quiz", 80, 1, 4);
-            addQuestion((int)act4, "1 + 2 bằng mấy bé ơi?", "dog", "3", "[\"2\", \"3\", \"4\", \"5\"]");
-            addQuestion((int)act4, "Nếu có 2 cái kẹo, mẹ cho thêm 2 cái nữa thì có mấy cái?", "rabbit", "4", "[\"3\", \"4\", \"5\"]");
-
-            // Bài 5: Thử thách kéo thả
-            long act5 = addActivity((int)topicId, "Thử thách kéo thả", "drag", 100, 1, 5);
-            addQuestionDrag((int)act5, "Hãy kéo số '5' vào ô trống bên dưới", "rabbit", "5", "[\"3\", \"5\", \"8\"]");
-            addQuestionDrag((int)act5, "Số nào là số 'Hai' nào?", "dog", "2", "[\"1\", \"2\", \"4\"]");
-            addQuestionDrag((int)act5, "Bé kéo số lượng Gấu Trúc (1) vào nhé", "panda", "1", "[\"1\", \"3\", \"0\"]");
-
-            // Bài 6: Bé tập nối cặp
-            long act6 = addActivity((int)topicId, "Bé tập nối cặp", "matching", 120, 1, 6);
-            addQuestionMatching((int)act6, "Bé hãy nối số với chữ tương ứng nhé", "[\"1:One\", \"2:Two\", \"3:Three\", \"4:Four\"]");
-            addQuestionMatching((int)act6, "Nối động vật với thức ăn nào", "[\"Gấu:Mật ong\", \"Thỏ:Cà rốt\", \"Chó:Xương\"]");
-
-            // Bài 7: Bé tập so sánh
-            long act7 = addActivity((int)topicId, "Bé tập so sánh", "comparison", 150, 1, 7);
-            addQuestionComparison((int)act7, "Bé hãy chọn dấu thích hợp nhé", "5", "8", "<");
-            addQuestionComparison((int)act7, "Số nào lớn hơn nhỉ?", "10", "3", ">");
-            addQuestionComparison((int)act7, "Bé xem hai số này thế nào với nhau?", "4", "4", "=");
-        }
-        cursor.close();
-    }
-
-    private long addActivity(int topicId, String title, String type, int xp, int locked, int index) {
-        ContentValues cv = new ContentValues();
-        cv.put(ActivitiesEntry.COLUMN_TOPIC_ID, topicId);
-        cv.put(ActivitiesEntry.COLUMN_TITLE, title);
-        cv.put(ActivitiesEntry.COLUMN_GAME_TYPE, type);
-        cv.put(ActivitiesEntry.COLUMN_XP_REWARD, xp);
-        cv.put(ActivitiesEntry.COLUMN_IS_LOCKED, locked);
-        cv.put(ActivitiesEntry.COLUMN_ORDER_INDEX, index);
-        return db.insert(ActivitiesEntry.TABLE_NAME, null, cv);
-    }
-
-    private void addQuestion(int actId, String text, String img, String ans, String optJson) {
-        ContentValues cv = new ContentValues();
-        cv.put(QuestionsEntry.COLUMN_ACTIVITY_ID, actId);
-        cv.put(QuestionsEntry.COLUMN_QUESTION_TYPE, "quiz");
-        cv.put(QuestionsEntry.COLUMN_QUESTION_TEXT, text);
-        cv.put(QuestionsEntry.COLUMN_IMAGE, img);
-        cv.put(QuestionsEntry.COLUMN_ANSWER_TEXT, ans);
-        cv.put(QuestionsEntry.COLUMN_OPTION_JSON, optJson);
-        db.insert(QuestionsEntry.TABLE_NAME, null, cv);
-    }
-
-    private void addQuestionDrag(int actId, String text, String img, String ans, String optJson) {
-        ContentValues cv = new ContentValues();
-        cv.put(QuestionsEntry.COLUMN_ACTIVITY_ID, actId);
-        cv.put(QuestionsEntry.COLUMN_QUESTION_TYPE, "drag");
-        cv.put(QuestionsEntry.COLUMN_QUESTION_TEXT, text);
-        cv.put(QuestionsEntry.COLUMN_IMAGE, img);
-        cv.put(QuestionsEntry.COLUMN_ANSWER_TEXT, ans);
-        cv.put(QuestionsEntry.COLUMN_OPTION_JSON, optJson);
-        db.insert(QuestionsEntry.TABLE_NAME, null, cv);
-    }
-
-    private void addQuestionMatching(int actId, String text, String pairsJson) {
-        ContentValues cv = new ContentValues();
-        cv.put(QuestionsEntry.COLUMN_ACTIVITY_ID, actId);
-        cv.put(QuestionsEntry.COLUMN_QUESTION_TYPE, "matching");
-        cv.put(QuestionsEntry.COLUMN_QUESTION_TEXT, text);
-        cv.put(QuestionsEntry.COLUMN_OPTION_JSON, "[\"" + pairsJson.replace("\"", "\\\"") + "\"]");
-        db.insert(QuestionsEntry.TABLE_NAME, null, cv);
-    }
-
-    private void addQuestionComparison(int actId, String text, String num1, String num2, String correctSign) {
-        ContentValues cv = new ContentValues();
-        cv.put(QuestionsEntry.COLUMN_ACTIVITY_ID, actId);
-        cv.put(QuestionsEntry.COLUMN_QUESTION_TYPE, "comparison");
-        cv.put(QuestionsEntry.COLUMN_QUESTION_TEXT, text);
-        cv.put(QuestionsEntry.COLUMN_ANSWER_TEXT, correctSign);
-        cv.put(QuestionsEntry.COLUMN_OPTION_JSON, "[\"" + num1 + "\", \"" + num2 + "\"]");
-        db.insert(QuestionsEntry.TABLE_NAME, null, cv);
-    }
-
-    @SuppressLint("Range")
     public List<Achievement> getAchievements(int userId) {
         openRead();
         List<Achievement> list = new ArrayList<>();
@@ -576,6 +555,51 @@ public class UserDAO {
         }
         cursor.close();
         return list;
+    }
+
+    public void seedDataIfNeeded() {
+        openRead();
+        Cursor cursor = db.query(ActivitiesEntry.TABLE_NAME, null, null, null, null, null, null);
+        if (cursor.getCount() == 0) {
+            openWrite();
+            
+            ContentValues tc = new ContentValues();
+            tc.put(TopicEntry.COLUMN_TITLE, "Toán cơ bản");
+            tc.put(TopicEntry.COLUMN_INDEX, 1);
+            long topicId = db.insert(TopicEntry.TABLE_NAME, null, tc);
+
+            long act1 = addActivityInternal((int)topicId, "Làm quen số 1-5", "quiz", 50, 0, 1);
+            addQuestionInternal((int)act1, "Có bao nhiêu Gấu Trúc nào?", "panda", "1", "[\"1\", \"2\", \"3\", \"5\"]");
+            addQuestionInternal((int)act1, "Đếm xem có bao nhiêu Chú Thỏ?", "rabbit", "3", "[\"2\", \"3\", \"4\", \"1\"]");
+            addQuestionInternal((int)act1, "Có mấy Chú Chó ở đây nhỉ?", "dog", "2", "[\"1\", \"2\", \"4\", \"3\"]");
+
+            long act2 = addActivityInternal((int)topicId, "Bé tập đếm đến 10", "quiz", 60, 1, 2);
+            addQuestionInternal((int)act2, "Số 'Bảy' viết như thế nào?", "fox", "7", "[\"5\", \"6\", \"7\", \"8\"]");
+            addQuestionInternal((int)act2, "Đâu là số 'Mười'?", "panda", "10", "[\"1\", \"0\", \"10\", \"100\"]");
+        }
+        cursor.close();
+    }
+
+    private long addActivityInternal(int topicId, String title, String type, int xp, int locked, int index) {
+        ContentValues cv = new ContentValues();
+        cv.put(ActivitiesEntry.COLUMN_TOPIC_ID, topicId);
+        cv.put(ActivitiesEntry.COLUMN_TITLE, title);
+        cv.put(ActivitiesEntry.COLUMN_GAME_TYPE, type);
+        cv.put(ActivitiesEntry.COLUMN_XP_REWARD, xp);
+        cv.put(ActivitiesEntry.COLUMN_IS_LOCKED, locked);
+        cv.put(ActivitiesEntry.COLUMN_ORDER_INDEX, index);
+        return db.insert(ActivitiesEntry.TABLE_NAME, null, cv);
+    }
+
+    private void addQuestionInternal(int actId, String text, String img, String ans, String optJson) {
+        ContentValues cv = new ContentValues();
+        cv.put(QuestionsEntry.COLUMN_ACTIVITY_ID, actId);
+        cv.put(QuestionsEntry.COLUMN_QUESTION_TYPE, "quiz");
+        cv.put(QuestionsEntry.COLUMN_QUESTION_TEXT, text);
+        cv.put(QuestionsEntry.COLUMN_IMAGE, img);
+        cv.put(QuestionsEntry.COLUMN_ANSWER_TEXT, ans);
+        cv.put(QuestionsEntry.COLUMN_OPTION_JSON, optJson);
+        db.insert(QuestionsEntry.TABLE_NAME, null, cv);
     }
 
     public static class UserData {

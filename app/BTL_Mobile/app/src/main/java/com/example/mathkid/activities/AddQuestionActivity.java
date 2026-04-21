@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class AddQuestionActivity extends AppCompatActivity {
     private UserDAO userDAO;
     private List<Lesson> activities;
     private int editingQuestionId = -1;
+    private int presetActivityId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +45,11 @@ public class AddQuestionActivity extends AppCompatActivity {
         edtOptions = findViewById(R.id.edtOptions);
         Button btnSave = findViewById(R.id.btnSave);
         ImageView btnBack = findViewById(R.id.btnBack);
+        TextView txtTitle = findViewById(R.id.txtTitle);
 
         btnBack.setOnClickListener(v -> finish());
 
+        presetActivityId = getIntent().getIntExtra("PRESET_ACTIVITY_ID", -1);
         setupSpinners();
 
         // Check if editing
@@ -53,6 +57,9 @@ public class AddQuestionActivity extends AppCompatActivity {
             editingQuestionId = getIntent().getIntExtra("edit_question_id", -1);
             loadQuestionData();
             btnSave.setText("Cập nhật");
+            txtTitle.setText("Sửa câu hỏi");
+        } else if (presetActivityId != -1) {
+            txtTitle.setText("Thêm câu hỏi mới");
         }
 
         btnSave.setOnClickListener(v -> saveQuestion());
@@ -61,12 +68,21 @@ public class AddQuestionActivity extends AppCompatActivity {
     private void setupSpinners() {
         activities = userDAO.getAllActivitiesForAdmin();
         List<String> activityTitles = new ArrayList<>();
-        for (Lesson l : activities) {
+        int selectedIndex = 0;
+        for (int i = 0; i < activities.size(); i++) {
+            Lesson l = activities.get(i);
             activityTitles.add(l.getTitle());
+            if (l.getId() == presetActivityId) {
+                selectedIndex = i;
+            }
         }
         ArrayAdapter<String> activityAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, activityTitles);
         activityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerActivity.setAdapter(activityAdapter);
+        
+        if (presetActivityId != -1) {
+            spinnerActivity.setSelection(selectedIndex);
+        }
 
         String[] types = {"quiz", "drag", "comparison", "matching"};
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, types);
