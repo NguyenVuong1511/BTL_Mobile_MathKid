@@ -66,7 +66,7 @@ public class ExamActivity extends AppCompatActivity {
     private boolean isAnswered = false;
     
     private CountDownTimer countDownTimer;
-    private static final long EXAM_TIME_LIMIT = 300000; // 5 phút (ms)
+    private static final long EXAM_TIME_LIMIT = 600000; // Tăng lên 10 phút cho 30 câu (ms)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +135,8 @@ public class ExamActivity extends AppCompatActivity {
     }
 
     private void loadExamQuestions() {
-        questionList = userDAO.getRandomQuestions(20);
+        // BÀI THI: Lấy ngẫu nhiên 30 câu hỏi
+        questionList = userDAO.getRandomQuestions(30);
         if (questionList == null || questionList.isEmpty()) {
             Toast.makeText(this, "Không tìm thấy câu hỏi cho bài thi!", Toast.LENGTH_SHORT).show();
             finish();
@@ -175,7 +176,6 @@ public class ExamActivity extends AppCompatActivity {
             txtQuestionText.setText(q.getText());
             correctAnswer = q.getAnswer();
 
-            // SỬA LỖI HIỂN THỊ ẢNH TRONG BÀI THI (Hỗ trợ cả Resource Name và Base64)
             if (imgQuestion != null) {
                 if (q.getImage() != null && !q.getImage().isEmpty()) {
                     if (q.getImage().length() > 100) { // Base64
@@ -341,7 +341,8 @@ public class ExamActivity extends AppCompatActivity {
         Intent intent = new Intent(this, QuizResult.class);
         intent.putExtra("correct_count", correctAnswersCount);
         intent.putExtra("total_questions", questionList.size());
-        intent.putExtra("xp_earned", correctAnswersCount * 30);
+        // BÀI THI: Hoàn thành nhận 200 XP
+        intent.putExtra("xp_earned", 200);
         intent.putExtra("activity_id", -1);
         startActivity(intent);
         finish();

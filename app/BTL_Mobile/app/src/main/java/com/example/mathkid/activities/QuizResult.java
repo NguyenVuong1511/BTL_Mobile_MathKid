@@ -15,7 +15,7 @@ import com.example.mathkid.database.UserDAO;
 
 public class QuizResult extends AppCompatActivity {
 
-    private TextView txtTitle, txtSub, txtXPEarned, txtResultCorrect, txtResultStars, txtResultStreak, txtHome;
+    private TextView txtTitle, txtSub, txtXPEarned, txtResultCorrect, txtResultStars, txtHome;
     private ImageView imgTrophy;
     private LinearLayout layoutStars;
     private View btnNext, btnRetry;
@@ -42,8 +42,7 @@ public class QuizResult extends AppCompatActivity {
         txtXPEarned = findViewById(R.id.txtXPEarned);
         txtResultCorrect = findViewById(R.id.txtResultCorrect);
         txtResultStars = findViewById(R.id.txtResultStars);
-        txtResultStreak = findViewById(R.id.txtResultStreak);
-        
+
         layoutStars = findViewById(R.id.layoutStars);
         btnNext = findViewById(R.id.btnNext);
         btnRetry = findViewById(R.id.btnRetry);
@@ -73,7 +72,7 @@ public class QuizResult extends AppCompatActivity {
         
         if (txtResultStars != null) txtResultStars.setText(stars + "/" + (total > 0 ? "3" : "0"));
 
-        // Cập nhật giao diện sao (layoutStars có 3 con là ImageView)
+        // Cập nhật giao diện sao
         if (layoutStars != null) {
             for (int i = 0; i < layoutStars.getChildCount(); i++) {
                 if (layoutStars.getChildAt(i) instanceof ImageView) {
@@ -99,10 +98,15 @@ public class QuizResult extends AppCompatActivity {
         // Lưu vào CSDL
         String username = sessionManager.getUsername();
         UserDAO.UserData user = userDAO.getUserData(username);
-        if (user != null && activityId != -1) {
-            userDAO.updateProgress(user.id, activityId, stars, correct, stars > 0);
-            userDAO.addXP(user.id, xp);
-            if (txtResultStreak != null) txtResultStreak.setText(user.streak + " 🔥");
+        if (user != null) {
+            // Luôn cộng XP nếu có
+            if (xp > 0) {
+                userDAO.addXP(user.id, xp);
+            }
+            // Chỉ cập nhật progress nếu là bài học theo level (activityId != -1)
+            if (activityId != -1) {
+                userDAO.updateProgress(user.id, activityId, stars, correct, stars > 0);
+            }
         }
     }
 
@@ -115,7 +119,6 @@ public class QuizResult extends AppCompatActivity {
         });
 
         btnRetry.setOnClickListener(v -> {
-            // Quay lại màn hình chơi với cùng activityId
             finish(); 
         });
 

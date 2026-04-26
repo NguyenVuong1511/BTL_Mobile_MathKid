@@ -38,7 +38,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         });
 
         cardStats.setOnClickListener(v -> {
-            // Intent to Statistics
+            startActivity(new Intent(AdminDashboardActivity.this, StatisticsActivity.class));
         });
 
         btnLogout.setOnClickListener(v -> {

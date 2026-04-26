@@ -140,7 +140,8 @@ public class PracticeActivity extends AppCompatActivity {
     }
 
     private void loadRandomQuestions() {
-        questionList = userDAO.getRandomQuestions(10);
+        // LUYỆN TẬP: Lấy ngẫu nhiên 20 câu hỏi
+        questionList = userDAO.getRandomQuestions(20);
         if (questionList == null || questionList.isEmpty()) {
             Toast.makeText(this, "Chưa có đủ câu hỏi để luyện tập!", Toast.LENGTH_SHORT).show();
             finish();
@@ -161,7 +162,6 @@ public class PracticeActivity extends AppCompatActivity {
             txtQuestionText.setText(q.getText());
             correctAnswer = q.getAnswer();
 
-            // Hiển thị ảnh (Hỗ trợ cả Resource Name và Base64)
             if (imgQuestion != null) {
                 if (q.getImage() != null && !q.getImage().isEmpty()) {
                     if (q.getImage().length() > 100) { // Base64
@@ -200,7 +200,8 @@ public class PracticeActivity extends AppCompatActivity {
             Intent intent = new Intent(this, QuizResult.class);
             intent.putExtra("correct_count", correctAnswersCount);
             intent.putExtra("total_questions", questionList.size());
-            intent.putExtra("xp_earned", correctAnswersCount * 15);
+            // LUYỆN TẬP: Hoàn thành nhận 100 XP
+            intent.putExtra("xp_earned", 100);
             intent.putExtra("activity_id", -1);
             startActivity(intent);
             finish();

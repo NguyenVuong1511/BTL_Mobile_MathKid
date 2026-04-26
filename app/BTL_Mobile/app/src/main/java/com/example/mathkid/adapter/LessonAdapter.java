@@ -45,7 +45,7 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
         Lesson lesson = lessonList.get(position);
         boolean isEven = position % 2 == 0;
 
-        // Xác định bài học "Hiện tại" (Bài đầu tiên chưa xong và không bị khóa)
+        // Xác định bài học "Hiện tại"
         boolean isCurrent = false;
         for (int i = 0; i < lessonList.size(); i++) {
             if (!lessonList.get(i).isComplete && !lessonList.get(i).isLocked) {
@@ -81,17 +81,45 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
         txtTitle.setText(lesson.title);
         txtNodeNum.setText(String.valueOf(levelNum));
 
-        // Set Icon bài học
         if (lesson.icon != null && !lesson.icon.isEmpty()) {
             int iconRes = context.getResources().getIdentifier(lesson.icon, "drawable", context.getPackageName());
             if (iconRes != 0) imgIcon.setImageResource(iconRes);
         }
 
-        // Xử lý hiển thị Sao
+        int themeResId;
+        // ƯU TIÊN KIỂM TRA TRẠNG THÁI KHÓA TRƯỚC
         if (lesson.isLocked) {
+            themeResId = R.style.GrayButtonTheme;
+            card.setAlpha(0.6f);
+            imgStatus.setVisibility(View.VISIBLE);
+            imgStatus.setImageResource(R.drawable.ic_lock);
+            txtNodeNum.setVisibility(View.GONE);
+            btnStart.setVisibility(View.GONE);
             starsLayout.setVisibility(View.INVISIBLE);
+            card.setOnClickListener(v -> Toast.makeText(context, "Bài học này đang bị khóa!", Toast.LENGTH_SHORT).show());
         } else {
+            card.setAlpha(1.0f);
             starsLayout.setVisibility(View.VISIBLE);
+            
+            if (lesson.isComplete) {
+                themeResId = isLeft ? R.style.GreenButtonTheme : R.style.BlueButtonTheme;
+                imgStatus.setVisibility(View.VISIBLE);
+                imgStatus.setImageResource(R.drawable.ic_check);
+                txtNodeNum.setVisibility(View.GONE);
+                btnStart.setVisibility(View.VISIBLE);
+            } else if (isCurrent) {
+                themeResId = R.style.OrangeButtonTheme;
+                imgStatus.setVisibility(View.GONE);
+                txtNodeNum.setVisibility(View.VISIBLE);
+                btnStart.setVisibility(View.VISIBLE);
+            } else {
+                // Trường hợp này hiếm khi xảy ra nếu logic mở khóa chuẩn, nhưng vẫn set mặc định
+                themeResId = R.style.PurpleButtonTheme;
+                imgStatus.setVisibility(View.GONE);
+                txtNodeNum.setVisibility(View.VISIBLE);
+                btnStart.setVisibility(View.VISIBLE);
+            }
+
             for (int i = 0; i < starsLayout.getChildCount(); i++) {
                 ImageView star = (ImageView) starsLayout.getChildAt(i);
                 if (i < lesson.starsEarned) {
@@ -102,35 +130,7 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
                     star.setAlpha(0.3f);
                 }
             }
-        }
 
-        int themeResId;
-        if (lesson.isLocked) {
-            themeResId = R.style.GrayButtonTheme;
-            card.setAlpha(0.6f);
-            imgStatus.setVisibility(View.VISIBLE);
-            imgStatus.setImageResource(R.drawable.ic_lock);
-            txtNodeNum.setVisibility(View.GONE);
-            btnStart.setVisibility(View.GONE);
-            card.setOnClickListener(v -> Toast.makeText(context, "Bài học này đang bị khóa!", Toast.LENGTH_SHORT).show());
-        } else {
-            card.setAlpha(1.0f);
-            imgStatus.setVisibility(View.GONE);
-            txtNodeNum.setVisibility(View.VISIBLE);
-            btnStart.setVisibility(View.VISIBLE);
-            
-            if (lesson.isComplete) {
-                themeResId = isLeft ? R.style.GreenButtonTheme : R.style.BlueButtonTheme;
-                imgStatus.setVisibility(View.VISIBLE);
-                imgStatus.setImageResource(R.drawable.ic_check);
-                txtNodeNum.setVisibility(View.GONE);
-            } else if (isCurrent) {
-                themeResId = R.style.OrangeButtonTheme;
-            } else {
-                themeResId = R.style.PurpleButtonTheme;
-            }
-
-            // Xử lý sự kiện click để bắt đầu học
             View.OnClickListener startLessonListener = v -> {
                 Intent intent = new Intent(context, QuizActivity.class);
                 intent.putExtra("activity_id", lesson.id);
@@ -141,7 +141,6 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
             btnStart.setOnClickListener(startLessonListener);
         }
 
-        // Áp dụng theme động cho cả viền ngoài (card/node) và lõi trong (inner)
         applyThemeToView(card, themeResId, R.drawable.bg_soft_button);
         applyThemeToView(node, themeResId, R.drawable.bg_soft_button);
         applyThemeToView(innerCard, themeResId, R.drawable.bg_soft_inner);

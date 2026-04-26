@@ -22,13 +22,6 @@ public class UserDAO {
 
     public UserDAO(Context context) {
         dbHelper = DatabaseHelper.getInstance(context);
-        // Vá lỗi: Đặt lại trạng thái khóa cho các bài học (trừ bài đầu tiên) nếu chúng đã bị mở khóa nhầm trên toàn hệ thống
-        try {
-            openWrite();
-            db.execSQL("UPDATE " + ActivitiesEntry.TABLE_NAME + " SET " + ActivitiesEntry.COLUMN_IS_LOCKED + " = 1 WHERE " + ActivitiesEntry.COLUMN_ORDER_INDEX + " > 1");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void openWrite() { db = dbHelper.getWritableDatabase(); }
@@ -386,9 +379,6 @@ public class UserDAO {
         cv.put(ProgressEntry.COLUMN_IS_COMPLETE, isComplete ? 1 : 0);
         cv.put(ProgressEntry.COLUMN_LAST_PLAYED, System.currentTimeMillis());
         db.replace(ProgressEntry.TABLE_NAME, null, cv);
-
-        // BỎ: Cập nhật global table ActivitiesEntry. 
-        // Logic mở khóa giờ đây được tính toán động theo từng user trong getLessonsWithProgress.
         
         updateTotalStars(userId);
         checkAndUnlockAchievements(userId);
@@ -410,11 +400,68 @@ public class UserDAO {
         checkAndUnlockAchievements(userId);
     }
 
+    public void seedDataIfNeeded() {
+        openRead();
+        Cursor cursor = db.query(ActivitiesEntry.TABLE_NAME, null, null, null, null, null, null);
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            openWrite();
+            
+            // TOPIC 1: LÀM QUEN VỚI CON SỐ
+            ContentValues t1 = new ContentValues();
+            t1.put(TopicEntry.COLUMN_TITLE, "Làm quen với con số");
+            t1.put(TopicEntry.COLUMN_INDEX, 1);
+            long topic1Id = db.insert(TopicEntry.TABLE_NAME, null, t1);
+
+            long act1_1 = addActivityInternal((int)topic1Id, "Bé tập đếm 1-5", "quiz", 50, 0, 1);
+            addQuestionInternal((int)act1_1, "Có bao nhiêu chú Gấu Trúc?", "panda", "1", "[\"1\", \"2\", \"3\", \"4\"]");
+            addQuestionInternal((int)act1_1, "Đếm xem có bao nhiêu chú Thỏ?", "rabbit", "3", "[\"2\", \"3\", \"5\", \"1\"]");
+            addQuestionInternal((int)act1_1, "Có bao nhiêu chú Chó ở đây?", "dog", "2", "[\"1\", \"2\", \"4\", \"3\"]");
+
+            long act1_2 = addActivityInternal((int)topic1Id, "Bé tập đếm 6-10", "quiz", 50, 1, 2);
+            addQuestionInternal((int)act1_2, "Đếm số bông hoa?", "flower", "6", "[\"5\", \"6\", \"7\", \"8\"]");
+            addQuestionInternal((int)act1_2, "Có bao nhiêu ngôi sao?", "star", "8", "[\"7\", \"8\", \"9\", \"10\"]");
+
+            // TOPIC 2: PHÉP TÍNH CƠ BẢN
+            ContentValues t2 = new ContentValues();
+            t2.put(TopicEntry.COLUMN_TITLE, "Phép tính cơ bản");
+            t2.put(TopicEntry.COLUMN_INDEX, 2);
+            long topic2Id = db.insert(TopicEntry.TABLE_NAME, null, t2);
+
+            long act2_1 = addActivityInternal((int)topic2Id, "Cộng trong phạm vi 5", "math", 70, 1, 4);
+            addQuestionInternal((int)act2_1, "1 + 1 = ?", null, "2", "[\"1\", \"2\", \"3\", \"4\"]");
+            addQuestionInternal((int)act2_1, "2 + 3 = ?", null, "5", "[\"4\", \"5\", \"6\", \"3\"]");
+        } else {
+            cursor.close();
+        }
+    }
+
+    private long addActivityInternal(int topicId, String title, String type, int xp, int locked, int index) {
+        ContentValues cv = new ContentValues();
+        cv.put(ActivitiesEntry.COLUMN_TOPIC_ID, topicId);
+        cv.put(ActivitiesEntry.COLUMN_TITLE, title);
+        cv.put(ActivitiesEntry.COLUMN_GAME_TYPE, type);
+        cv.put(ActivitiesEntry.COLUMN_XP_REWARD, xp);
+        cv.put(ActivitiesEntry.COLUMN_IS_LOCKED, locked);
+        cv.put(ActivitiesEntry.COLUMN_ORDER_INDEX, index);
+        return db.insert(ActivitiesEntry.TABLE_NAME, null, cv);
+    }
+
+    private void addQuestionInternal(int actId, String text, String img, String ans, String optJson) {
+        ContentValues cv = new ContentValues();
+        cv.put(QuestionsEntry.COLUMN_ACTIVITY_ID, actId);
+        cv.put(QuestionsEntry.COLUMN_QUESTION_TYPE, "quiz");
+        cv.put(QuestionsEntry.COLUMN_QUESTION_TEXT, text);
+        cv.put(QuestionsEntry.COLUMN_IMAGE, img);
+        cv.put(QuestionsEntry.COLUMN_ANSWER_TEXT, ans);
+        cv.put(QuestionsEntry.COLUMN_OPTION_JSON, optJson);
+        db.insert(QuestionsEntry.TABLE_NAME, null, cv);
+    }
+
     @SuppressLint("Range")
     public List<Lesson> getLessonsWithProgress(int userId) {
         openRead();
         List<Lesson> lessons = new ArrayList<>();
-        // Sắp xếp theo topic và thứ tự để logic mở khóa tuần tự hoạt động chính xác
         String sql = "SELECT a.*, p." + ProgressEntry.COLUMN_STARS_EARNED + ", p." + ProgressEntry.COLUMN_IS_COMPLETE + 
                      " FROM " + ActivitiesEntry.TABLE_NAME + " a " +
                      " LEFT JOIN " + ProgressEntry.TABLE_NAME + " p ON a." + ActivitiesEntry._ID + " = p." + ProgressEntry.COLUMN_ACTIVITY_ID + 
@@ -423,13 +470,11 @@ public class UserDAO {
         
         Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(userId)});
         
-        boolean previousComplete = true; // Bài đầu tiên của mỗi topic mặc định được mở
-        int currentTopicId = -1;
+        boolean previousComplete = true; // Chỉ bài đầu tiên mở
 
         if (cursor.moveToFirst()) {
             do {
                 int id = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry._ID));
-                int topicId = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry.COLUMN_TOPIC_ID));
                 String title = cursor.getString(cursor.getColumnIndex(ActivitiesEntry.COLUMN_TITLE));
                 String icon = cursor.getString(cursor.getColumnIndex(ActivitiesEntry.COLUMN_GAME_TYPE));
                 int stars = cursor.getInt(cursor.getColumnIndex(ProgressEntry.COLUMN_STARS_EARNED));
@@ -437,16 +482,7 @@ public class UserDAO {
                 boolean isComplete = cursor.getInt(cursor.getColumnIndex(ProgressEntry.COLUMN_IS_COMPLETE)) == 1;
                 int orderIndex = cursor.getInt(cursor.getColumnIndex(ActivitiesEntry.COLUMN_ORDER_INDEX));
 
-                // Nếu chuyển chủ đề mới, reset trạng thái mở khóa cho bài đầu tiên
-                if (topicId != currentTopicId) {
-                    currentTopicId = topicId;
-                    previousComplete = true;
-                }
-
-                // Bài học bị khóa nếu: 
-                // 1. Admin đặt khóa mặc định (globalLocked == 1) 
-                // 2. VÀ bài học trước đó chưa hoàn thành (!previousComplete)
-                // Lưu ý: Nếu globalLocked == 0 thì luôn mở.
+                // Logic khóa: Chỉ mở khi (globalLocked==0) HOẶC (bài trước đã xong)
                 boolean isLocked = (globalLocked == 1) && !previousComplete;
 
                 lessons.add(new Lesson(id, title, icon, stars, isLocked, isComplete, orderIndex));
@@ -626,51 +662,6 @@ public class UserDAO {
         openWrite();
         db.delete(UserAchievementEntry.TABLE_NAME, UserAchievementEntry.COLUMN_ACHIEVEMENT_ID + "=?", new String[]{String.valueOf(id)});
         return db.delete(AchievementEntry.TABLE_NAME, AchievementEntry._ID + "=?", new String[]{String.valueOf(id)}) > 0;
-    }
-
-    public void seedDataIfNeeded() {
-        openRead();
-        Cursor cursor = db.query(ActivitiesEntry.TABLE_NAME, null, null, null, null, null, null);
-        if (cursor.getCount() == 0) {
-            openWrite();
-            
-            ContentValues tc = new ContentValues();
-            tc.put(TopicEntry.COLUMN_TITLE, "Toán cơ bản");
-            tc.put(TopicEntry.COLUMN_INDEX, 1);
-            long topicId = db.insert(TopicEntry.TABLE_NAME, null, tc);
-
-            long act1 = addActivityInternal((int)topicId, "Làm quen số 1-5", "quiz", 50, 0, 1);
-            addQuestionInternal((int)act1, "Có bao nhiêu Gấu Trúc nào?", "panda", "1", "[\"1\", \"2\", \"3\", \"5\"]");
-            addQuestionInternal((int)act1, "Đếm xem có bao nhiêu Chú Thỏ?", "rabbit", "3", "[\"2\", \"3\", \"4\", \"1\"]");
-            addQuestionInternal((int)act1, "Có mấy Chú Chó ở đây nhỉ?", "dog", "2", "[\"1\", \"2\", \"4\", \"3\"]");
-
-            long act2 = addActivityInternal((int)topicId, "Bé tập đếm đến 10", "quiz", 60, 1, 2);
-            addQuestionInternal((int)act2, "Số 'Bảy' viết như thế nào?", "fox", "7", "[\"5\", \"6\", \"7\", \"8\"]");
-            addQuestionInternal((int)act2, "Đâu là số 'Mười'?", "panda", "10", "[\"1\", \"0\", \"10\", \"100\"]");
-        }
-        cursor.close();
-    }
-
-    private long addActivityInternal(int topicId, String title, String type, int xp, int locked, int index) {
-        ContentValues cv = new ContentValues();
-        cv.put(ActivitiesEntry.COLUMN_TOPIC_ID, topicId);
-        cv.put(ActivitiesEntry.COLUMN_TITLE, title);
-        cv.put(ActivitiesEntry.COLUMN_GAME_TYPE, type);
-        cv.put(ActivitiesEntry.COLUMN_XP_REWARD, xp);
-        cv.put(ActivitiesEntry.COLUMN_IS_LOCKED, locked);
-        cv.put(ActivitiesEntry.COLUMN_ORDER_INDEX, index);
-        return db.insert(ActivitiesEntry.TABLE_NAME, null, cv);
-    }
-
-    private void addQuestionInternal(int actId, String text, String img, String ans, String optJson) {
-        ContentValues cv = new ContentValues();
-        cv.put(QuestionsEntry.COLUMN_ACTIVITY_ID, actId);
-        cv.put(QuestionsEntry.COLUMN_QUESTION_TYPE, "quiz");
-        cv.put(QuestionsEntry.COLUMN_QUESTION_TEXT, text);
-        cv.put(QuestionsEntry.COLUMN_IMAGE, img);
-        cv.put(QuestionsEntry.COLUMN_ANSWER_TEXT, ans);
-        cv.put(QuestionsEntry.COLUMN_OPTION_JSON, optJson);
-        db.insert(QuestionsEntry.TABLE_NAME, null, cv);
     }
 
     public static class UserData {

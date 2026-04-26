@@ -1,15 +1,12 @@
 package com.example.mathkid.activities;
 
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +22,7 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView txtGreeting, txtName, txtXPBadge, txtLevelProgress, txtXPValue, txtStreakTitle;
+    private TextView txtGreeting, txtName, txtXPBadge, txtLevelProgress, txtXPValue;
     private ProgressBar progressBar;
     private ImageView imgAvatar;
     private FrameLayout btnLearn, btnPractice, btnExam, btnGames, btnAchievements, btnProgress;
@@ -72,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         txtXPBadge = findViewById(R.id.txtXPBadge);
         txtLevelProgress = findViewById(R.id.txtLevelProgress);
         txtXPValue = findViewById(R.id.txtXPValue);
-        txtStreakTitle = findViewById(R.id.txtStreakTitle);
         progressBar = findViewById(R.id.progressBar);
         imgAvatar = findViewById(R.id.imgAvatar);
 
@@ -89,37 +85,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        imgAvatar.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
-        navProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
+        if (imgAvatar != null) imgAvatar.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
+        if (navProfile != null) navProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
 
-        btnLearn.setOnClickListener(v -> {
-            startActivity(new Intent(this, ItemLevel.class));
-        });
+        if (btnLearn != null) {
+            btnLearn.setOnClickListener(v -> {
+                startActivity(new Intent(this, ItemLevel.class));
+            });
+        }
 
-        btnPractice.setOnClickListener(v -> {
-            startActivity(new Intent(this, PracticeActivity.class));
-        });
+        if (btnPractice != null) {
+            btnPractice.setOnClickListener(v -> {
+                startActivity(new Intent(this, PracticeActivity.class));
+            });
+        }
 
-        btnExam.setOnClickListener(v -> {
-            // Mở màn hình Bài thi
-            startActivity(new Intent(this, ExamActivity.class));
-        });
+        if (btnExam != null) {
+            btnExam.setOnClickListener(v -> {
+                startActivity(new Intent(this, ExamActivity.class));
+            });
+        }
 
-        btnGames.setOnClickListener(v -> {
-            startActivity(new Intent(this, MathGameActivity.class));
-        });
+        if (btnGames != null) {
+            btnGames.setOnClickListener(v -> {
+                startActivity(new Intent(this, MathGameActivity.class));
+            });
+        }
 
-        btnAchievements.setOnClickListener(v -> {
-            startActivity(new Intent(this, AchievementsActivity.class));
-        });
+        if (btnAchievements != null) {
+            btnAchievements.setOnClickListener(v -> {
+                startActivity(new Intent(this, AchievementsActivity.class));
+            });
+        }
 
-        btnProgress.setOnClickListener(v -> {
-            startActivity(new Intent(this, ProgressActivity.class));
-        });
+        if (btnProgress != null) {
+            btnProgress.setOnClickListener(v -> {
+                startActivity(new Intent(this, ProgressActivity.class));
+            });
+        }
 
-        navRanking.setOnClickListener(v -> {
-            startActivity(new Intent(this, RankingActivity.class));
-        });
+        if (navRanking != null) {
+            navRanking.setOnClickListener(v -> {
+                startActivity(new Intent(this, RankingActivity.class));
+            });
+        }
     }
 
     private void loadUserData() {
@@ -127,24 +136,24 @@ public class MainActivity extends AppCompatActivity {
         UserDAO.UserData data = userDAO.getUserData(currentUsername);
 
         if (data != null) {
-            txtName.setText(data.username);
+            if (txtName != null) txtName.setText(data.username);
             
             int xpPerLevel = 500;
             int currentLevel = (data.exp / xpPerLevel) + 1;
             int xpInCurrentLevel = data.exp % xpPerLevel;
             
-            txtLevelProgress.setText("Tiến độ Cấp " + currentLevel);
-            txtXPValue.setText(xpInCurrentLevel + "/" + xpPerLevel + " XP");
-            progressBar.setMax(xpPerLevel);
-            progressBar.setProgress(xpInCurrentLevel);
+            if (txtLevelProgress != null) txtLevelProgress.setText("Tiến độ Cấp " + currentLevel);
+            if (txtXPValue != null) txtXPValue.setText(xpInCurrentLevel + "/" + xpPerLevel + " XP");
+            if (progressBar != null) {
+                progressBar.setMax(xpPerLevel);
+                progressBar.setProgress(xpInCurrentLevel);
+            }
 
             if (txtXPBadge != null) {
                 txtXPBadge.setText(data.exp + " XP");
             }
 
-            txtStreakTitle.setText("Chuỗi " + data.streak + " ngày!");
-
-            if (data.avatar != null && !data.avatar.isEmpty()) {
+            if (data.avatar != null && !data.avatar.isEmpty() && imgAvatar != null) {
                 int resId = getResources().getIdentifier(data.avatar.toLowerCase(), "drawable", getPackageName());
                 if (resId != 0) {
                     imgAvatar.setImageResource(resId);
@@ -167,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             greeting = "Chào buổi tối! 🌙";
         }
-        txtGreeting.setText(greeting);
+        if (txtGreeting != null) txtGreeting.setText(greeting);
     }
 
     private void redirectToWelcome() {

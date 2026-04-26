@@ -39,7 +39,7 @@
             android:id="@+id/btnLogout"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/ic_lock"
+            android:src="@drawable/ic_home"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/title"
             app:layout_constraintBottom_toBottomOf="@id/title"

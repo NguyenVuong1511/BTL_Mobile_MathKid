@@ -2,6 +2,7 @@ package com.example.mathkid.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.example.mathkid.database.DatabaseContract.*;
@@ -9,7 +10,7 @@ import com.example.mathkid.database.DatabaseContract.*;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "MathKid.db";
-    private static final int DATABASE_VERSION = 9; // Nâng cấp version để thực hiện seeding mới
+    private static final int DATABASE_VERSION = 12; 
 
     private static final String SQL_CREATE_USERS =
             "CREATE TABLE " + UserEntry.TABLE_NAME + " (" +
@@ -100,24 +101,67 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void seedInitialData(SQLiteDatabase db) {
-        // 1. Thêm Topic
-        ContentValues topicValues = new ContentValues();
-        topicValues.put(TopicEntry.COLUMN_TITLE, "Toán Cơ Bản");
-        topicValues.put(TopicEntry.COLUMN_INDEX, 1);
-        long topicId = db.insert(TopicEntry.TABLE_NAME, null, topicValues);
+        // TOPIC 1: LÀM QUEN VỚI CON SỐ
+        ContentValues t1 = new ContentValues();
+        t1.put(TopicEntry.COLUMN_TITLE, "Làm quen với con số");
+        t1.put(TopicEntry.COLUMN_ICON, "ic_topic_numbers");
+        t1.put(TopicEntry.COLUMN_INDEX, 1);
+        long topic1Id = db.insert(TopicEntry.TABLE_NAME, null, t1);
 
-        // 2. Thêm Bài học (Activities)
-        long act1 = addActivity(db, topicId, "Bé tập đếm 1-5", "quiz", 50, 0, 1);
-        long act2 = addActivity(db, topicId, "So sánh Lớn - Bé", "comparison", 60, 1, 2);
+        long act1_1 = addActivity(db, topic1Id, "Bé tập đếm 1-5", "quiz", 50, 0, 1);
+        addQuestion(db, act1_1, "quiz", "Có bao nhiêu chú Gấu Trúc?", "panda", "1", "[\"1\", \"2\", \"3\", \"4\"]");
+        addQuestion(db, act1_1, "quiz", "Đếm xem có bao nhiêu chú Thỏ?", "rabbit", "3", "[\"2\", \"3\", \"5\", \"1\"]");
+        addQuestion(db, act1_1, "quiz", "Có bao nhiêu chú Chó ở đây?", "dog", "2", "[\"1\", \"2\", \"4\", \"3\"]");
+        addQuestion(db, act1_1, "quiz", "Có bao nhiêu quả táo?", "apple", "4", "[\"3\", \"4\", \"5\", \"2\"]");
+        addQuestion(db, act1_1, "quiz", "Có bao nhiêu con mèo?", "cat", "5", "[\"4\", \"5\", \"3\", \"6\"]");
 
-        // 3. Thêm Câu hỏi mẫu cho Bài 1 (Quiz)
-        addQuestion(db, act1, "quiz", "Có bao nhiêu chú Gấu Trúc?", "panda", "1", "[\"1\", \"2\", \"3\", \"4\"]");
-        addQuestion(db, act1, "quiz", "Đếm xem có bao nhiêu chú Thỏ?", "rabbit", "3", "[\"2\", \"3\", \"5\", \"1\"]");
-        addQuestion(db, act1, "quiz", "Có bao nhiêu chú Chó ở đây?", "dog", "2", "[\"1\", \"2\", \"4\", \"3\"]");
+        long act1_2 = addActivity(db, topic1Id, "Bé tập đếm 6-10", "quiz", 50, 1, 2);
+        addQuestion(db, act1_2, "quiz", "Đếm số bông hoa?", "flower", "6", "[\"5\", \"6\", \"7\", \"8\"]");
+        addQuestion(db, act1_2, "quiz", "Có bao nhiêu ngôi sao?", "star", "8", "[\"7\", \"8\", \"9\", \"10\"]");
+        addQuestion(db, act1_2, "quiz", "Đếm số con cá?", "fish", "10", "[\"8\", \"9\", \"10\", \"7\"]");
 
-        // 4. Thêm Câu hỏi mẫu cho Bài 2 (So sánh - Comparison)
-        addQuestion(db, act2, "comparison", "Số nào lớn hơn?", null, ">", "[\"5\", \"3\"]");
-        addQuestion(db, act2, "comparison", "Số nào bé hơn?", null, "<", "[\"2\", \"8\"]");
+        long act1_3 = addActivity(db, topic1Id, "Tìm số còn thiếu", "fill_blank", 60, 1, 3);
+        addQuestion(db, act1_3, "fill_blank", "1, 2, ?, 4, 5", null, "3", "[\"2\", \"3\", \"4\", \"5\"]");
+        addQuestion(db, act1_3, "fill_blank", "6, ?, 8, 9, 10", null, "7", "[\"5\", \"7\", \"8\", \"9\"]");
+
+        // TOPIC 2: PHÉP TÍNH CƠ BẢN
+        ContentValues t2 = new ContentValues();
+        t2.put(TopicEntry.COLUMN_TITLE, "Phép tính cơ bản");
+        t2.put(TopicEntry.COLUMN_ICON, "ic_topic_math");
+        t2.put(TopicEntry.COLUMN_INDEX, 2);
+        long topic2Id = db.insert(TopicEntry.TABLE_NAME, null, t2);
+
+        long act2_1 = addActivity(db, topic2Id, "Cộng trong phạm vi 5", "math", 70, 1, 1);
+        addQuestion(db, act2_1, "math", "1 + 1 = ?", null, "2", "[\"1\", \"2\", \"3\", \"4\"]");
+        addQuestion(db, act2_1, "math", "2 + 3 = ?", null, "5", "[\"4\", \"5\", \"6\", \"3\"]");
+        addQuestion(db, act2_1, "math", "1 + 4 = ?", null, "5", "[\"3\", \"4\", \"5\", \"6\"]");
+
+        long act2_2 = addActivity(db, topic2Id, "Trừ trong phạm vi 5", "math", 70, 1, 2);
+        addQuestion(db, act2_2, "math", "5 - 1 = ?", null, "4", "[\"3\", \"4\", \"5\", \"2\"]");
+        addQuestion(db, act2_2, "math", "3 - 2 = ?", null, "1", "[\"1\", \"2\", \"0\", \"3\"]");
+
+        // TOPIC 3: HÌNH KHỐI VÀ MÀU SẮC
+        ContentValues t3 = new ContentValues();
+        t3.put(TopicEntry.COLUMN_TITLE, "Hình khối & Màu sắc");
+        t3.put(TopicEntry.COLUMN_ICON, "ic_topic_shapes");
+        t3.put(TopicEntry.COLUMN_INDEX, 3);
+        long topic3Id = db.insert(TopicEntry.TABLE_NAME, null, t3);
+
+        long act3_1 = addActivity(db, topic3Id, "Nhận diện hình khối", "quiz", 60, 1, 1);
+        addQuestion(db, act3_1, "quiz", "Đây là hình gì?", "circle", "Hình tròn", "[\"Hình tròn\", \"Hình vuông\", \"Hình tam giác\"]");
+        addQuestion(db, act3_1, "quiz", "Hình nào là hình vuông?", "shapes_mix", "Hình vuông", "[\"Hình tròn\", \"Hình vuông\", \"Hình tam giác\"]");
+
+        // TOPIC 4: SO SÁNH & LOGIC
+        ContentValues t4 = new ContentValues();
+        t4.put(TopicEntry.COLUMN_TITLE, "So sánh & Logic");
+        t4.put(TopicEntry.COLUMN_ICON, "ic_topic_logic");
+        t4.put(TopicEntry.COLUMN_INDEX, 4);
+        long topic4Id = db.insert(TopicEntry.TABLE_NAME, null, t4);
+
+        long act4_1 = addActivity(db, topic4Id, "So sánh Lớn - Bé", "comparison", 60, 1, 1);
+        addQuestion(db, act4_1, "comparison", "Số nào lớn hơn?", null, ">", "[\"5\", \"3\"]");
+        addQuestion(db, act4_1, "comparison", "Số nào bé hơn?", null, "<", "[\"2\", \"8\"]");
+        addQuestion(db, act4_1, "comparison", "Số nào lớn hơn?", null, ">", "[\"9\", \"7\"]");
     }
 
     private long addActivity(SQLiteDatabase db, long topicId, String title, String type, int xp, int locked, int index) {
@@ -145,8 +189,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private void seedAchievements(SQLiteDatabase db) {
         addAchievement(db, "Người Mới Bắt Đầu", "Hoàn thành bài học đầu tiên", "ic_award_beginner", "lesson_count", 1);
         addAchievement(db, "Chuyên Gia Đếm Số", "Hoàn thành 5 bài học", "ic_award_counter", "lesson_count", 5);
-        addAchievement(db, "Ngôi Sao Tỏa Sáng", "Đạt được tổng cộng 10 sao", "ic_award_star", "total_stars", 10);
-        addAchievement(db, "Thợ Săn Điểm Thưởng", "Đạt mốc 100 XP", "ic_award_xp", "xp_milestone", 100);
+        addAchievement(db, "Bậc Thầy Toán Học", "Hoàn thành 20 bài học", "ic_award_master", "lesson_count", 20);
+        addAchievement(db, "Ngôi Sao Tỏa Sáng", "Đạt được tổng cộng 10 sao", "ic_award_star_1", "total_stars", 10);
+        addAchievement(db, "Siêu Sao", "Đạt được tổng cộng 50 sao", "ic_award_star_2", "total_stars", 50);
+        addAchievement(db, "Thợ Săn Điểm Thưởng", "Đạt mốc 100 XP", "ic_award_xp_1", "xp_milestone", 100);
+        addAchievement(db, "Kẻ Chinh Phục", "Đạt mốc 1000 XP", "ic_award_xp_2", "xp_milestone", 1000);
+        addAchievement(db, "Kiên Trì", "Đạt chuỗi 7 ngày học tập", "ic_award_streak", "streak", 7);
     }
 
     private void addAchievement(SQLiteDatabase db, String title, String desc, String icon, String type, int val) {
@@ -157,6 +205,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(AchievementEntry.COLUMN_TYPE, type);
         cv.put(AchievementEntry.COLUMN_REQUIRED_VALUE, val);
         db.insert(AchievementEntry.TABLE_NAME, null, cv);
+    }
+
+    public int getCount(String tableName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + tableName, null);
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        return count;
+    }
+
+    public int getTotalStars() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT SUM(" + UserEntry.COLUMN_TOTAL_STARS + ") FROM " + UserEntry.TABLE_NAME, null);
+        int total = 0;
+        if (cursor.moveToFirst()) {
+            total = cursor.getInt(0);
+        }
+        cursor.close();
+        return total;
     }
 
     @Override

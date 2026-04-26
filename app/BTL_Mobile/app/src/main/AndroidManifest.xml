@@ -13,6 +13,10 @@
         android:theme="@style/Theme.MathKid">
 
         <activity
+            android:name="com.example.mathkid.activities.StatisticsActivity"
+            android:exported="false"
+            android:label="Thống kê hệ thống" />
+        <activity
             android:name="com.example.mathkid.activities.AchievementManagementActivity"
             android:exported="false"
             android:label="Quản lý thành tích" />

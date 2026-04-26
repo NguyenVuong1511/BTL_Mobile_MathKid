@@ -29,7 +29,7 @@ import java.util.List;
 public class ProfileActivity extends AppCompatActivity {
 
     ImageView imgProfileAvatar;
-    TextView txtProfileName, txtProfileXP, txtProfileLevel, txtProfileStreak, txtProgressValue;
+    TextView txtProfileName, txtProfileXP, txtProfileLevel, txtProgressValue;
     ProgressBar progressLevel;
     LinearLayout layoutAchievements;
     View btnLogout, btnEditAvatar, btnEditInfo, btnSecurity, btnViewAllAchievements;
@@ -62,7 +62,6 @@ public class ProfileActivity extends AppCompatActivity {
         txtProfileName = findViewById(R.id.txtProfileName);
         txtProfileXP = findViewById(R.id.txtProfileXP);
         txtProfileLevel = findViewById(R.id.txtProfileLevel);
-        txtProfileStreak = findViewById(R.id.txtProfileStreak);
         txtProgressValue = findViewById(R.id.txtProgressValue);
         progressLevel = findViewById(R.id.progressLevel);
         layoutAchievements = findViewById(R.id.layoutAchievements);
@@ -117,7 +116,6 @@ public class ProfileActivity extends AppCompatActivity {
         if (data != null) {
             txtProfileName.setText(data.username);
             txtProfileXP.setText(String.valueOf(data.exp));
-            txtProfileStreak.setText(String.valueOf(data.streak));
 
             int xpPerLevel = 500;
             int currentLevel = (data.exp / xpPerLevel) + 1;
