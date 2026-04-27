@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +29,7 @@ import com.example.mathkid.database.UserDAO;
 import com.example.mathkid.model.Achievement;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AchievementManagementActivity extends AppCompatActivity {
@@ -37,6 +40,7 @@ public class AchievementManagementActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private ImageView ivCurrentPreview;
     private String selectedImageBase64 = "";
+    private List<Achievement> allAchievements = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +54,27 @@ public class AchievementManagementActivity extends AppCompatActivity {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         findViewById(R.id.btnAdd).setOnClickListener(v -> showAddEditDialog(null));
 
+        EditText edtSearch = findViewById(R.id.edtSearch);
+        edtSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterAchievements(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
         loadAchievements();
     }
 
     private void loadAchievements() {
-        List<Achievement> list = userDAO.getAllAchievementsAdmin();
+        allAchievements = userDAO.getAllAchievementsAdmin();
         if (adapter == null) {
-            adapter = new AchievementAdapter(this, list, new AchievementAdapter.OnAchievementListener() {
+            adapter = new AchievementAdapter(this, new ArrayList<>(allAchievements), new AchievementAdapter.OnAchievementListener() {
                 @Override
                 public void onEdit(Achievement achievement) {
                     showAddEditDialog(achievement);
@@ -79,7 +97,19 @@ public class AchievementManagementActivity extends AppCompatActivity {
             });
             rvAchievements.setAdapter(adapter);
         } else {
-            adapter.updateList(list);
+            adapter.updateList(allAchievements);
+        }
+    }
+
+    private void filterAchievements(String query) {
+        List<Achievement> filteredList = new ArrayList<>();
+        for (Achievement achievement : allAchievements) {
+            if (achievement.title.toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(achievement);
+            }
+        }
+        if (adapter != null) {
+            adapter.updateList(filteredList);
         }
     }
 

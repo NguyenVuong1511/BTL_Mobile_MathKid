@@ -2,9 +2,12 @@ package com.example.mathkid.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +22,7 @@ import com.example.mathkid.R;
 import com.example.mathkid.database.UserDAO;
 import com.example.mathkid.model.Question;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ManageQuestionsActivity extends AppCompatActivity {
@@ -27,6 +31,7 @@ public class ManageQuestionsActivity extends AppCompatActivity {
     private UserDAO userDAO;
     private QuestionAdapter adapter;
     private int filterActivityId = -1;
+    private List<Question> allQuestions = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,7 @@ public class ManageQuestionsActivity extends AppCompatActivity {
         ImageView btnBack = findViewById(R.id.btnBack);
         ImageView btnAddQuestion = findViewById(R.id.btnAddQuestion);
         TextView txtTitle = findViewById(R.id.txtTitle);
+        EditText edtSearch = findViewById(R.id.edtSearch);
 
         filterActivityId = getIntent().getIntExtra("ACTIVITY_ID", -1);
         String activityTitle = getIntent().getStringExtra("ACTIVITY_TITLE");
@@ -56,6 +62,19 @@ public class ManageQuestionsActivity extends AppCompatActivity {
         });
 
         rvQuestions.setLayoutManager(new LinearLayoutManager(this));
+
+        edtSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterQuestions(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     @Override
@@ -65,14 +84,25 @@ public class ManageQuestionsActivity extends AppCompatActivity {
     }
 
     private void loadQuestions() {
-        List<Question> questions;
         if (filterActivityId != -1) {
-            questions = userDAO.getQuestions(filterActivityId);
+            allQuestions = userDAO.getQuestions(filterActivityId);
         } else {
-            questions = userDAO.getAllQuestions();
+            allQuestions = userDAO.getAllQuestions();
         }
-        adapter = new QuestionAdapter(questions);
+        adapter = new QuestionAdapter(new ArrayList<>(allQuestions));
         rvQuestions.setAdapter(adapter);
+    }
+
+    private void filterQuestions(String query) {
+        List<Question> filteredList = new ArrayList<>();
+        for (Question q : allQuestions) {
+            if (q.getText().toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(q);
+            }
+        }
+        if (adapter != null) {
+            adapter.updateList(filteredList);
+        }
     }
 
     private class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.QuestionViewHolder> {
@@ -80,6 +110,11 @@ public class ManageQuestionsActivity extends AppCompatActivity {
 
         public QuestionAdapter(List<Question> questionList) {
             this.questionList = questionList;
+        }
+
+        public void updateList(List<Question> newList) {
+            this.questionList = newList;
+            notifyDataSetChanged();
         }
 
         @NonNull
@@ -96,14 +131,12 @@ public class ManageQuestionsActivity extends AppCompatActivity {
             holder.txtType.setText(question.getType());
             holder.txtAnswer.setText("Đáp án: " + question.getAnswer());
 
-            // 1. CHỨC NĂNG SỬA CÂU HỎI
             holder.btnEdit.setOnClickListener(v -> {
                 Intent intent = new Intent(ManageQuestionsActivity.this, AddQuestionActivity.class);
                 intent.putExtra("edit_question_id", question.getId());
                 startActivity(intent);
             });
 
-            // 2. CHỨC NĂNG XEM TRƯỚC (QUAN TRƯỚC: MỞ QUIZACTIVITY)
             holder.btnPreview.setOnClickListener(v -> {
                 Intent intent = new Intent(ManageQuestionsActivity.this, QuizActivity.class);
                 intent.putExtra("IS_PREVIEW", true);
@@ -112,7 +145,6 @@ public class ManageQuestionsActivity extends AppCompatActivity {
                 startActivity(intent);
             });
 
-            // 3. CHỨC NĂNG XÓA
             holder.btnDelete.setOnClickListener(v -> {
                 new AlertDialog.Builder(ManageQuestionsActivity.this)
                         .setTitle("Xóa câu hỏi")

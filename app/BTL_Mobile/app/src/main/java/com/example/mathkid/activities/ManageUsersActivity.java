@@ -1,9 +1,12 @@
 package com.example.mathkid.activities;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.mathkid.R;
 import com.example.mathkid.database.UserDAO;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ManageUsersActivity extends AppCompatActivity {
@@ -21,6 +25,7 @@ public class ManageUsersActivity extends AppCompatActivity {
     private RecyclerView rvUsers;
     private UserDAO userDAO;
     private UserAdapter adapter;
+    private List<UserDAO.UserData> allUsers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,17 +35,44 @@ public class ManageUsersActivity extends AppCompatActivity {
         userDAO = new UserDAO(this);
         rvUsers = findViewById(R.id.rvUsers);
         ImageView btnBack = findViewById(R.id.btnBack);
+        EditText edtSearch = findViewById(R.id.edtSearch);
 
         btnBack.setOnClickListener(v -> finish());
 
         rvUsers.setLayoutManager(new LinearLayoutManager(this));
+        
         loadUsers();
+
+        edtSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterUsers(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     private void loadUsers() {
-        List<UserDAO.UserData> users = userDAO.getAllUsers();
-        adapter = new UserAdapter(users);
+        allUsers = userDAO.getAllUsers();
+        adapter = new UserAdapter(new ArrayList<>(allUsers));
         rvUsers.setAdapter(adapter);
+    }
+
+    private void filterUsers(String query) {
+        List<UserDAO.UserData> filteredList = new ArrayList<>();
+        for (UserDAO.UserData user : allUsers) {
+            if (user.username.toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(user);
+            }
+        }
+        if (adapter != null) {
+            adapter.updateList(filteredList);
+        }
     }
 
     private class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
@@ -48,6 +80,11 @@ public class ManageUsersActivity extends AppCompatActivity {
 
         public UserAdapter(List<UserDAO.UserData> userList) {
             this.userList = userList;
+        }
+
+        public void updateList(List<UserDAO.UserData> newList) {
+            this.userList = newList;
+            notifyDataSetChanged();
         }
 
         @NonNull

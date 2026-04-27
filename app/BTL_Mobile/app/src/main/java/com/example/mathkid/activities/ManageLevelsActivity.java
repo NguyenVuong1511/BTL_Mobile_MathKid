@@ -2,7 +2,9 @@ package com.example.mathkid.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,7 @@ public class ManageLevelsActivity extends AppCompatActivity {
     private UserDAO userDAO;
     private LevelAdapter adapter;
     private FloatingActionButton fabAddLevel;
+    private List<Lesson> allLevels = new ArrayList<>();
 
     private int count;
 
@@ -46,19 +49,46 @@ public class ManageLevelsActivity extends AppCompatActivity {
         rvLevels = findViewById(R.id.rvLevels);
         ImageView btnBack = findViewById(R.id.btnBack);
         fabAddLevel = findViewById(R.id.fabAddLevel);
+        EditText edtSearch = findViewById(R.id.edtSearch);
 
         btnBack.setOnClickListener(v -> finish());
         fabAddLevel.setOnClickListener(v -> showLevelWithQuestionsDialog(null));
 
         rvLevels.setLayoutManager(new LinearLayoutManager(this));
+        
         loadLevels();
+
+        edtSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterLevels(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     private void loadLevels() {
-        List<Lesson> levels = userDAO.getAllActivitiesForAdmin();
-        count = levels.size();
-        adapter = new LevelAdapter(levels);
+        allLevels = userDAO.getAllActivitiesForAdmin();
+        count = allLevels.size();
+        adapter = new LevelAdapter(new ArrayList<>(allLevels));
         rvLevels.setAdapter(adapter);
+    }
+
+    private void filterLevels(String query) {
+        List<Lesson> filteredList = new ArrayList<>();
+        for (Lesson lesson : allLevels) {
+            if (lesson.getTitle().toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(lesson);
+            }
+        }
+        if (adapter != null) {
+            adapter.updateList(filteredList);
+        }
     }
 
     private void showLevelWithQuestionsDialog(Lesson lesson) {
@@ -199,6 +229,11 @@ public class ManageLevelsActivity extends AppCompatActivity {
 
         public LevelAdapter(List<Lesson> levelList) {
             this.levelList = levelList;
+        }
+
+        public void updateList(List<Lesson> newList) {
+            this.levelList = newList;
+            notifyDataSetChanged();
         }
 
         @NonNull
