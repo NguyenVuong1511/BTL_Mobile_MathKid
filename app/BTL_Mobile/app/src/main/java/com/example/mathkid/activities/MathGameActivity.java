@@ -1,9 +1,14 @@
 package com.example.mathkid.activities;
 
-import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -36,6 +41,7 @@ public class MathGameActivity extends AppCompatActivity {
     private Random random = new Random();
     private UserDAO userDAO;
     private SessionManager sessionManager;
+    private MediaPlayer correctPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +99,6 @@ public class MathGameActivity extends AppCompatActivity {
     private void nextQuestion() {
         if (countDownTimer != null) countDownTimer.cancel();
 
-        // Tạo phép tính ngẫu nhiên
         int a = random.nextInt(10) + 1;
         int b = random.nextInt(10) + 1;
         boolean isPlus = random.nextBoolean();
@@ -102,13 +107,11 @@ public class MathGameActivity extends AppCompatActivity {
             correctAnswer = a + b;
             txtProblem.setText(a + " + " + b + " = ?");
         } else {
-            // Đảm bảo kết quả không âm
             if (a < b) { int temp = a; a = b; b = temp; }
             correctAnswer = a - b;
             txtProblem.setText(a + " - " + b + " = ?");
         }
 
-        // Tạo danh sách đáp án
         List<Integer> options = new ArrayList<>();
         options.add(correctAnswer);
         while (options.size() < 4) {
@@ -149,9 +152,9 @@ public class MathGameActivity extends AppCompatActivity {
 
     private void checkAnswer(int selected) {
         if (selected == correctAnswer) {
+            playCorrectSound();
             score += 10;
             txtScore.setText("ĐIỂM: " + score);
-            Toast.makeText(this, "Đúng rồi! +10", Toast.LENGTH_SHORT).show();
             nextQuestion();
         } else {
             handleWrongAnswer();
@@ -159,13 +162,45 @@ public class MathGameActivity extends AppCompatActivity {
     }
 
     private void handleWrongAnswer() {
+        vibrateError();
         lives--;
         updateLivesUI();
         if (lives > 0) {
-            Toast.makeText(this, "Sai rồi bé ơi! ❤️", Toast.LENGTH_SHORT).show();
             nextQuestion();
         } else {
             gameOver();
+        }
+    }
+
+    private void playCorrectSound() {
+        try {
+            if (correctPlayer != null) {
+                correctPlayer.release();
+            }
+            int resId = getResources().getIdentifier("correct", "raw", getPackageName());
+            if (resId != 0) {
+                correctPlayer = MediaPlayer.create(this, resId);
+                correctPlayer.start();
+                correctPlayer.setOnCompletionListener(MediaPlayer::release);
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void vibrateError() {
+        Vibrator v = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            VibratorManager vibratorManager = (VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+            v = vibratorManager.getDefaultVibrator();
+        } else {
+            v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        }
+
+        if (v != null && v.hasVibrator()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                v.vibrate(300);
+            }
         }
     }
 
@@ -178,14 +213,12 @@ public class MathGameActivity extends AppCompatActivity {
     private void gameOver() {
         if (countDownTimer != null) countDownTimer.cancel();
         
-        // Cộng XP cho người dùng
         String username = sessionManager.getUsername();
         UserDAO.UserData data = userDAO.getUserData(username);
         if (data != null) {
-            userDAO.addXP(data.id, score / 2); // Thưởng XP bằng nửa số điểm game
+            userDAO.addXP(data.id, score / 2);
         }
 
-        // Chuyển sang màn hình kết quả
         Intent intent = new Intent(this, GameResultActivity.class);
         intent.putExtra("score", score);
         startActivity(intent);
@@ -196,5 +229,9 @@ public class MathGameActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (countDownTimer != null) countDownTimer.cancel();
+        if (correctPlayer != null) {
+            correctPlayer.release();
+            correctPlayer = null;
+        }
     }
 }

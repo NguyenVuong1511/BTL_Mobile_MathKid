@@ -2,10 +2,16 @@ package com.example.mathkid.activities;
 
 import android.animation.ObjectAnimator;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.util.Base64;
 import android.view.DragEvent;
 import android.view.HapticFeedbackConstants;
@@ -64,6 +70,8 @@ public class PracticeActivity extends AppCompatActivity {
     private UserDAO userDAO;
     private boolean isAnswered = false;
     private boolean currentQuestionFirstTry = true;
+    
+    private MediaPlayer correctPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +148,6 @@ public class PracticeActivity extends AppCompatActivity {
     }
 
     private void loadRandomQuestions() {
-        // LUYỆN TẬP: Lấy ngẫu nhiên 20 câu hỏi
         questionList = userDAO.getRandomQuestions(20);
         if (questionList == null || questionList.isEmpty()) {
             Toast.makeText(this, "Chưa có đủ câu hỏi để luyện tập!", Toast.LENGTH_SHORT).show();
@@ -200,7 +207,6 @@ public class PracticeActivity extends AppCompatActivity {
             Intent intent = new Intent(this, QuizResult.class);
             intent.putExtra("correct_count", correctAnswersCount);
             intent.putExtra("total_questions", questionList.size());
-            // LUYỆN TẬP: Hoàn thành nhận 100 XP
             intent.putExtra("xp_earned", 100);
             intent.putExtra("activity_id", -1);
             startActivity(intent);
@@ -218,6 +224,7 @@ public class PracticeActivity extends AppCompatActivity {
             if (i < options.size()) {
                 optionTexts[i].setText(options.get(i));
                 optionViews[i].setVisibility(View.VISIBLE);
+                optionViews[i].setAlpha(1.0f);
             } else optionViews[i].setVisibility(View.GONE);
         }
     }
@@ -296,13 +303,14 @@ public class PracticeActivity extends AppCompatActivity {
             cardR.setOnClickListener(v -> {
                 if (selectedLeftView == null) return;
                 if (matchingData.get(selectedLeftValue).equals(rVal)) {
+                    playCorrectSound();
                     v.setVisibility(View.INVISIBLE);
                     selectedLeftView.setVisibility(View.INVISIBLE);
                     selectedLeftView = null;
                     matchingCorrectCount++;
                     if (matchingCorrectCount == matchingData.size()) checkAnswer("correct_matching");
                 } else {
-                    Toast.makeText(this, "Bé thử lại nhé!", Toast.LENGTH_SHORT).show();
+                    vibrateError();
                     selectedLeftView.setAlpha(1.0f);
                     selectedLeftView = null;
                     currentQuestionFirstTry = false;
@@ -351,26 +359,69 @@ public class PracticeActivity extends AppCompatActivity {
         
         boolean isCorrect = false;
         if ("correct_matching".equals(selectedAnswer)) isCorrect = true;
-        else if (selectedAnswer.equals(correctAnswer)) isCorrect = true;
+        else if (selectedAnswer != null && selectedAnswer.equals(correctAnswer)) isCorrect = true;
 
         if (isCorrect) {
+            playCorrectSound();
             if (currentQuestionFirstTry) correctAnswersCount++;
             
             if (dropZone.getVisibility() == View.VISIBLE) txtDroppedValue.setText(selectedAnswer);
             if (comparisonContainer.getVisibility() == View.VISIBLE) txtDroppedCompare.setText(selectedAnswer);
 
-            Toast.makeText(this, "Tuyệt vời! ✨", Toast.LENGTH_SHORT).show();
             isAnswered = true;
             
-            txtQuestionText.postDelayed(() -> {
+            txtQuestionIndex.postDelayed(() -> {
                 currentQuestionIndex++;
                 displayQuestion();
-            }, 1000);
+            }, 800);
         } else {
-            Toast.makeText(this, "Bé thử lại nhé! ❤️", Toast.LENGTH_SHORT).show();
+            vibrateError();
             currentQuestionFirstTry = false; 
             if (dropZone.getVisibility() == View.VISIBLE) txtDroppedValue.setText("?");
             if (comparisonContainer.getVisibility() == View.VISIBLE) txtDroppedCompare.setText("?");
+        }
+    }
+
+    private void playCorrectSound() {
+        try {
+            if (correctPlayer != null) {
+                correctPlayer.release();
+            }
+            int resId = getResources().getIdentifier("correct", "raw", getPackageName());
+            if (resId != 0) {
+                correctPlayer = MediaPlayer.create(this, resId);
+                correctPlayer.start();
+                correctPlayer.setOnCompletionListener(MediaPlayer::release);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void vibrateError() {
+        Vibrator v = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            VibratorManager vibratorManager = (VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+            v = vibratorManager.getDefaultVibrator();
+        } else {
+            v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        }
+
+        if (v != null && v.hasVibrator()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                v.vibrate(300);
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (correctPlayer != null) {
+            correctPlayer.release();
+            correctPlayer = null;
         }
     }
 }

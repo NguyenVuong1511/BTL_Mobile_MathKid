@@ -3,10 +3,16 @@ package com.example.mathkid.activities;
 import android.animation.ObjectAnimator;
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.util.Base64;
 import android.view.DragEvent;
 import android.view.HapticFeedbackConstants;
@@ -70,6 +76,8 @@ public class QuizActivity extends AppCompatActivity {
     private UserDAO userDAO;
     private boolean isAnswered = false;
     private boolean currentQuestionFirstTry = true;
+
+    private MediaPlayer correctPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,10 +204,10 @@ public class QuizActivity extends AppCompatActivity {
             if (txtQuestionText != null) txtQuestionText.setText(q.getText());
             correctAnswer = q.getAnswer();
 
-            // Xử lý hiển thị ảnh (Base64 hoặc Resource)
+            // Xử lý hiển thị ảnh
             if (imgQuestion != null) {
                 if (q.getImage() != null && !q.getImage().isEmpty()) {
-                    if (q.getImage().length() > 100) { // Giả định là chuỗi Base64
+                    if (q.getImage().length() > 100) {
                         try {
                             byte[] decodedString = Base64.decode(q.getImage(), Base64.DEFAULT);
                             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
@@ -212,7 +220,7 @@ public class QuizActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             imgQuestion.setVisibility(View.GONE);
                         }
-                    } else { // Giả định là tên Resource
+                    } else {
                         int resId = getResources().getIdentifier(q.getImage(), "drawable", getPackageName());
                         imgQuestion.setImageResource(resId != 0 ? resId : R.drawable.panda);
                         imgQuestion.setVisibility(View.VISIBLE);
@@ -222,7 +230,6 @@ public class QuizActivity extends AppCompatActivity {
                 }
             }
 
-            // Hiển thị layout tương ứng với loại câu hỏi
             if ("drag".equals(q.getType())) showDragLayout(q.getOptions());
             else if ("matching".equals(q.getType())) showMatchingLayout(q.getOptions());
             else if ("comparison".equals(q.getType())) showComparisonLayout(q.getOptions());
@@ -256,6 +263,7 @@ public class QuizActivity extends AppCompatActivity {
                 if (options != null && i < options.size()) {
                     if (optionTexts[i] != null) optionTexts[i].setText(options.get(i));
                     optionViews[i].setVisibility(View.VISIBLE);
+                    optionViews[i].setAlpha(1.0f);
                 } else optionViews[i].setVisibility(View.GONE);
             }
         }
@@ -333,17 +341,17 @@ public class QuizActivity extends AppCompatActivity {
                 });
                 cardR.setOnClickListener(v -> {
                     if (selectedLeftView == null) {
-                        Toast.makeText(this, "Chọn ô bên trái trước!", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (matchingData.get(selectedLeftValue).equals(rVal)) {
+                        playCorrectSound();
                         v.setVisibility(View.INVISIBLE);
                         selectedLeftView.setVisibility(View.INVISIBLE);
                         selectedLeftView = null;
                         matchingCorrectCount++;
                         if (matchingCorrectCount == matchingData.size()) checkAnswer("correct_matching");
                     } else {
-                        Toast.makeText(this, "Chưa đúng, thử lại nhé!", Toast.LENGTH_SHORT).show();
+                        vibrateError();
                         selectedLeftView.setAlpha(1.0f);
                         selectedLeftView = null;
                         currentQuestionFirstTry = false;
@@ -398,22 +406,68 @@ public class QuizActivity extends AppCompatActivity {
         if (isAnswered) return;
         boolean isCorrect = "correct_matching".equals(selectedAnswer) || (selectedAnswer != null && selectedAnswer.equals(correctAnswer));
         if (isCorrect) {
+            playCorrectSound();
             if (currentQuestionFirstTry) correctAnswersCount++;
             if (dropZone != null && dropZone.getVisibility() == View.VISIBLE && txtDroppedValue != null)
                 txtDroppedValue.setText(selectedAnswer);
             if (comparisonContainer != null && comparisonContainer.getVisibility() == View.VISIBLE && txtDroppedCompare != null)
                 txtDroppedCompare.setText(selectedAnswer);
-            Toast.makeText(this, "Chính xác! ✨", Toast.LENGTH_SHORT).show();
+            
             isAnswered = true;
             if (txtQuestionText != null) {
                 txtQuestionText.postDelayed(() -> {
                     currentQuestionIndex++;
                     displayQuestion();
-                }, 1000);
+                }, 800);
             }
         } else {
-            Toast.makeText(this, "Bé thử lại nhé! ❤️", Toast.LENGTH_SHORT).show();
+            vibrateError();
             currentQuestionFirstTry = false;
+        }
+    }
+
+    private void playCorrectSound() {
+        try {
+            if (correctPlayer != null) {
+                correctPlayer.release();
+            }
+            // Bạn cần thêm file correct.mp3 vào thư mục res/raw
+            // Nếu chưa có, đoạn code này sẽ không crash nhưng âm thanh sẽ không phát
+            int resId = getResources().getIdentifier("correct", "raw", getPackageName());
+            if (resId != 0) {
+                correctPlayer = MediaPlayer.create(this, resId);
+                correctPlayer.start();
+                correctPlayer.setOnCompletionListener(MediaPlayer::release);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void vibrateError() {
+        Vibrator v = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            VibratorManager vibratorManager = (VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+            v = vibratorManager.getDefaultVibrator();
+        } else {
+            v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        }
+
+        if (v != null && v.hasVibrator()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                v.vibrate(300);
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (correctPlayer != null) {
+            correctPlayer.release();
+            correctPlayer = null;
         }
     }
 }
