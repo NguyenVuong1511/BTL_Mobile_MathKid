@@ -15,6 +15,10 @@
         android:theme="@style/Theme.MathKid">
 
         <activity
+            android:name="com.example.mathkid.activities.EditProfileActivity"
+            android:exported="false"
+            android:label="Sửa thông tin" />
+        <activity
             android:name="com.example.mathkid.activities.StatisticsActivity"
             android:exported="false"
             android:label="Thống kê hệ thống" />

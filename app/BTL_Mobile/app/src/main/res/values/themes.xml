@@ -22,7 +22,7 @@
         <item name="postSplashScreenTheme">@style/Theme.MathKid</item>
     </style>
 
-    <style name="GreenButtonTheme">
+    <style name="GreenButtonTheme" parent="ThemeOverlay.AppCompat">
         <item name="shadowDark">#1E7D32</item>
         <item name="shadowLight">#A5E6B1</item>
         <item name="gradientStart">#4CAF50</item>
@@ -32,7 +32,7 @@
         <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <style name="BlueButtonTheme">
+    <style name="BlueButtonTheme" parent="ThemeOverlay.AppCompat">
         <item name="shadowDark">#1A74BB</item>
         <item name="shadowLight">#82E2FF</item>
         <item name="gradientStart">#4BD1FF</item>
@@ -42,7 +42,7 @@
         <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <style name="PurpleButtonTheme">
+    <style name="PurpleButtonTheme" parent="ThemeOverlay.AppCompat">
         <item name="shadowDark">#8A2BE2</item>
         <item name="shadowLight">#E0B0FF</item>
         <item name="gradientStart">#BF66FF</item>
@@ -52,7 +52,7 @@
         <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <style name="OrangeButtonTheme">
+    <style name="OrangeButtonTheme" parent="ThemeOverlay.AppCompat">
         <item name="shadowDark">#C56000</item>
         <item name="shadowLight">#FFE082</item>
         <item name="gradientStart">#FFB300</item>
@@ -62,7 +62,7 @@
         <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <style name="PinkButtonTheme">
+    <style name="PinkButtonTheme" parent="ThemeOverlay.AppCompat">
         <item name="shadowDark">#C2185B</item>
         <item name="shadowLight">#FFB2DD</item>
         <item name="gradientStart">#FF66B2</item>
@@ -72,7 +72,7 @@
         <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <style name="RedButtonTheme">
+    <style name="RedButtonTheme" parent="ThemeOverlay.AppCompat">
         <item name="shadowDark">#B71C1C</item>
         <item name="shadowLight">#FF8A80</item>
         <item name="gradientStart">#FF5252</item>
@@ -82,7 +82,7 @@
         <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <style name="YellowButtonTheme">
+    <style name="YellowButtonTheme" parent="ThemeOverlay.AppCompat">
         <item name="shadowDark">#D4A017</item>
         <item name="shadowLight">#FFF59D</item>
         <item name="gradientStart">#FFEB3B</item>
@@ -92,7 +92,7 @@
         <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <style name="GrayButtonTheme">
+    <style name="GrayButtonTheme" parent="ThemeOverlay.AppCompat">
 
         <item name="shadowDark">#9E9E9E</item>
 

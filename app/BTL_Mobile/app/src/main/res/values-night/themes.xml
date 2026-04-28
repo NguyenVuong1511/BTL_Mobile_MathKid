@@ -4,83 +4,100 @@
         <!-- Customize your dark theme here. -->
         <item name="android:fontFamily">@font/nunito_bold</item>
         <item name="fontFamily">@font/nunito_bold</item>
+
+        <!-- Default attributes for buttons if needed -->
+        <item name="innerStroke">#80FFFFFF</item>
     </style>
 
     <style name="Theme.MathKid" parent="Base.Theme.MathKid" />
 
     <style name="Theme.MathKid.Splash" parent="Theme.SplashScreen">
+        <!-- Màu nền -->
         <item name="windowSplashScreenBackground">@color/black</item>
+        <!-- Logo -->
         <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
+        <!-- Theme sau khi splash -->
         <item name="postSplashScreenTheme">@style/Theme.MathKid</item>
     </style>
+
     <!-- Theme cho nút xanh -->
-    <style name="GreenButtonTheme">
+    <style name="GreenButtonTheme" parent="ThemeOverlay.AppCompat">
         <item name="shadowDark">#1E7D32</item>
-        <item name="shadowLight">#A5E6B1</item>
-        <item name="gradientStart">#4CAF50</item>
-        <item name="gradientEnd">#2E7D32</item>
-        <item name="innerGradientStart">#66BB6A</item>
-        <item name="innerGradientEnd">#388E3C</item>
+        <item name="shadowLight">#455A64</item>
+        <item name="gradientStart">#388E3C</item>
+        <item name="gradientEnd">#1B5E20</item>
+        <item name="innerGradientStart">#43A047</item>
+        <item name="innerGradientEnd">#2E7D32</item>
         <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <style name="BlueButtonTheme">
-        <item name="shadowDark">#1A74BB</item>
-        <item name="shadowLight">#82E2FF</item>
-        <item name="gradientStart">#4BD1FF</item>
-        <item name="gradientEnd">#0099FF</item>
-        <item name="innerGradientStart">#70DCFF</item>
-        <item name="innerGradientEnd">#29B0FF</item>
+    <style name="BlueButtonTheme" parent="ThemeOverlay.AppCompat">
+        <item name="shadowDark">#0D47A1</item>
+        <item name="shadowLight">#37474F</item>
+        <item name="gradientStart">#1976D2</item>
+        <item name="gradientEnd">#0D47A1</item>
+        <item name="innerGradientStart">#1E88E5</item>
+        <item name="innerGradientEnd">#1565C0</item>
         <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <style name="PurpleButtonTheme">
-        <item name="shadowDark">#8A2BE2</item>
-        <item name="shadowLight">#E0B0FF</item>
-        <item name="gradientStart">#BF66FF</item>
-        <item name="gradientEnd">#9933FF</item>
-        <item name="innerGradientStart">#CE85FF</item>
-        <item name="innerGradientEnd">#A64DFF</item>
+    <style name="PurpleButtonTheme" parent="ThemeOverlay.AppCompat">
+        <item name="shadowDark">#4A148C</item>
+        <item name="shadowLight">#37474F</item>
+        <item name="gradientStart">#7B1FA2</item>
+        <item name="gradientEnd">#4A148C</item>
+        <item name="innerGradientStart">#8E24AA</item>
+        <item name="innerGradientEnd">#6A1B9A</item>
         <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <style name="OrangeButtonTheme">
-        <item name="shadowDark">#C56000</item>
-        <item name="shadowLight">#FFE082</item>
-        <item name="gradientStart">#FFB300</item>
-        <item name="gradientEnd">#FF8C00</item>
-        <item name="innerGradientStart">#FFC44D</item>
-        <item name="innerGradientEnd">#FFA21A</item>
+    <style name="OrangeButtonTheme" parent="ThemeOverlay.AppCompat">
+        <item name="shadowDark">#E65100</item>
+        <item name="shadowLight">#4E342E</item>
+        <item name="gradientStart">#F57C00</item>
+        <item name="gradientEnd">#E65100</item>
+        <item name="innerGradientStart">#FB8C00</item>
+        <item name="innerGradientEnd">#EF6C00</item>
         <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <style name="PinkButtonTheme">
-        <item name="shadowDark">#C2185B</item>
-        <item name="shadowLight">#FFB2DD</item>
-        <item name="gradientStart">#FF66B2</item>
-        <item name="gradientEnd">#E60073</item>
-        <item name="innerGradientStart">#FF85C2</item>
-        <item name="innerGradientEnd">#FF3399</item>
+    <style name="PinkButtonTheme" parent="ThemeOverlay.AppCompat">
+        <item name="shadowDark">#880E4F</item>
+        <item name="shadowLight">#4A148C</item>
+        <item name="gradientStart">#C2185B</item>
+        <item name="gradientEnd">#880E4F</item>
+        <item name="innerGradientStart">#D81B60</item>
+        <item name="innerGradientEnd">#AD1457</item>
         <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <style name="RedButtonTheme">
-        <item name="shadowDark">#B71C1C</item>
-        <item name="shadowLight">#FF8A80</item>
-        <item name="gradientStart">#FF5252</item>
-        <item name="gradientEnd">#D32F2F</item>
-        <item name="innerGradientStart">#FF7979</item>
-        <item name="innerGradientEnd">#E53935</item>
+    <style name="RedButtonTheme" parent="ThemeOverlay.AppCompat">
+        <item name="shadowDark">#7F0000</item>
+        <item name="shadowLight">#3E2723</item>
+        <item name="gradientStart">#D32F2F</item>
+        <item name="gradientEnd">#B71C1C</item>
+        <item name="innerGradientStart">#E53935</item>
+        <item name="innerGradientEnd">#C62828</item>
         <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <style name="YellowButtonTheme">
-        <item name="shadowDark">#D4A017</item>
-        <item name="shadowLight">#FFF59D</item>
-        <item name="gradientStart">#FFEB3B</item>
-        <item name="gradientEnd">#FBC02D</item>
-        <item name="innerGradientStart">#FFF176</item>
-        <item name="innerGradientEnd">#FDD835</item>
+    <style name="YellowButtonTheme" parent="ThemeOverlay.AppCompat">
+        <item name="shadowDark">#F57F17</item>
+        <item name="shadowLight">#424242</item>
+        <item name="gradientStart">#FBC02D</item>
+        <item name="gradientEnd">#F9A825</item>
+        <item name="innerGradientStart">#FDD835</item>
+        <item name="innerGradientEnd">#FBC02D</item>
         <item name="innerStroke">#BFFFFFFF</item>
+    </style>
+
+    <style name="GrayButtonTheme" parent="ThemeOverlay.AppCompat">
+        <item name="shadowDark">#212121</item>
+        <item name="shadowLight">#424242</item>
+        <item name="gradientStart">#616161</item>
+        <item name="gradientEnd">#424242</item>
+        <item name="innerGradientStart">#757575</item>
+        <item name="innerGradientEnd">#616161</item>
+        <item name="innerStroke">#80FFFFFF</item>
     </style>
 </resources>

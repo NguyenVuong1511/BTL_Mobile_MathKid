@@ -73,6 +73,7 @@ public class UserDAO {
             userData = new UserData();
             userData.id = cursor.getInt(cursor.getColumnIndex(UserEntry._ID));
             userData.username = cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_USERNAME));
+            userData.password = cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_PASSWORD));
             userData.avatar = cursor.getString(cursor.getColumnIndex(UserEntry.COLUMN_AVATAR));
             userData.level = cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_LEVEL));
             userData.exp = cursor.getInt(cursor.getColumnIndex(UserEntry.COLUMN_EXP));
@@ -81,6 +82,18 @@ public class UserDAO {
         }
         cursor.close();
         return userData;
+    }
+
+    public boolean updateUser(int userId, String newUsername, String newPassword) {
+        openWrite();
+        ContentValues values = new ContentValues();
+        if (newUsername != null) values.put(UserEntry.COLUMN_USERNAME, newUsername);
+        if (newPassword != null) values.put(UserEntry.COLUMN_PASSWORD, newPassword);
+        return db.update(UserEntry.TABLE_NAME, values, UserEntry._ID + "=?", new String[]{String.valueOf(userId)}) > 0;
+    }
+
+    public boolean updateUsername(int userId, String newUsername) {
+        return updateUser(userId, newUsername, null);
     }
 
     @SuppressLint("Range")
@@ -667,6 +680,7 @@ public class UserDAO {
     public static class UserData {
         public int id;
         public String username;
+        public String password;
         public String avatar;
         public int level;
         public int exp;

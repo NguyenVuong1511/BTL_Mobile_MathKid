@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mathkid.R;
@@ -64,13 +65,14 @@ public class ExamActivity extends AppCompatActivity {
 
     private UserDAO userDAO;
     private boolean isAnswered = false;
-    
+
     private CountDownTimer countDownTimer;
     private static final long EXAM_TIME_LIMIT = 600000; // Tăng lên 10 phút cho 30 câu (ms)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_exam);
 
         userDAO = new UserDAO(this);
@@ -150,7 +152,7 @@ public class ExamActivity extends AppCompatActivity {
                 int minutes = (int) (millisUntilFinished / 1000) / 60;
                 int seconds = (int) (millisUntilFinished / 1000) % 60;
                 txtTimer.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
-                
+
                 if (millisUntilFinished < 60000) {
                     txtTimer.setTextColor(getResources().getColor(android.R.color.holo_red_light));
                 }
@@ -168,7 +170,7 @@ public class ExamActivity extends AppCompatActivity {
         isAnswered = false;
         if (currentQuestionIndex < questionList.size()) {
             Question q = questionList.get(currentQuestionIndex);
-            
+
             int progress = (int) (((float) (currentQuestionIndex) / questionList.size()) * 100);
             ObjectAnimator.ofInt(examProgressBar, "progress", examProgressBar.getProgress(), progress).setDuration(500).start();
 
@@ -327,7 +329,7 @@ public class ExamActivity extends AppCompatActivity {
         }
 
         if (isCorrect) correctAnswersCount++;
-        
+
         txtQuestionText.postDelayed(() -> {
             currentQuestionIndex++;
             displayQuestion();
@@ -337,7 +339,7 @@ public class ExamActivity extends AppCompatActivity {
     private void finishExam() {
         if (countDownTimer != null) countDownTimer.cancel();
         examProgressBar.setProgress(100);
-        
+
         Intent intent = new Intent(this, QuizResult.class);
         intent.putExtra("correct_count", correctAnswersCount);
         intent.putExtra("total_questions", questionList.size());

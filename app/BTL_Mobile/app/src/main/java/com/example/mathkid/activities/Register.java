@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 
@@ -39,8 +40,9 @@ public class Register extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         // Cài đặt Splash Screen trước khi gọi super.onCreate
         SplashScreen.installSplashScreen(this);
-        
+
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
 
         userDAO = new UserDAO(this);
@@ -67,20 +69,20 @@ public class Register extends AppCompatActivity {
         if (txtLogin != null) {
             String fullText = "Bạn đã có tài khoản? Đăng nhập";
             SpannableString spannableString = new SpannableString(fullText);
-            
+
             // Tìm vị trí của "Đăng nhập"
             int start = fullText.indexOf("Đăng nhập");
             int end = start + "Đăng nhập".length();
-            
+
             if (start != -1) {
                 // Màu xanh lá cây
-                spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#2E7D32")), 
+                spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#2E7D32")),
                         start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 // In đậm (tùy chọn)
-                spannableString.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 
+                spannableString.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
                         start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-            
+
             txtLogin.setText(spannableString);
         }
 
@@ -106,7 +108,7 @@ public class Register extends AppCompatActivity {
                 finish(); // Đóng trang đăng ký
             });
         }
-        
+
         // Nút quay lại
         View btnBack = findViewById(R.id.btnBack);
         if (btnBack != null) {

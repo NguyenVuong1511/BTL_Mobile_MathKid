@@ -14,10 +14,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.mathkid.R;
 import com.example.mathkid.database.SessionManager;
@@ -41,6 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
 
         userDAO = new UserDAO(this);
@@ -48,9 +47,12 @@ public class ProfileActivity extends AppCompatActivity {
 
         initViews();
         setupClickListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         loadProfileData();
-
-
     }
 
     private void initViews() {
@@ -89,7 +91,12 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         btnEditAvatar.setOnClickListener(v -> Toast.makeText(this, "Tính năng đổi ảnh đại diện đang phát triển!", Toast.LENGTH_SHORT).show());
-        btnEditInfo.setOnClickListener(v -> Toast.makeText(this, "Chỉnh sửa thông tin đang phát triển!", Toast.LENGTH_SHORT).show());
+        
+        btnEditInfo.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+            startActivity(intent);
+        });
+
         btnSecurity.setOnClickListener(v -> Toast.makeText(this, "Cài đặt bảo mật đang phát triển!", Toast.LENGTH_SHORT).show());
 
         navHome.setOnClickListener(v -> {
@@ -138,10 +145,12 @@ public class ProfileActivity extends AppCompatActivity {
         List<Achievement> achievements = userDAO.getAchievements(userId);
         
         int count = 0;
-        for (Achievement ach : achievements) {
-            if (count >= 5) break;
-            addAchievementView(ach);
-            count++;
+        if (achievements != null) {
+            for (Achievement ach : achievements) {
+                if (count >= 5) break;
+                addAchievementView(ach);
+                count++;
+            }
         }
     }
 
