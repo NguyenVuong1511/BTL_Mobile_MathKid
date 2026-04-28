@@ -15,17 +15,72 @@
     </style>
     <!-- Theme cho nút xanh -->
     <style name="GreenButtonTheme">
-        <item name="shadowDark">#3FAF6B</item>
-        <item name="shadowLight">#A8F0C2</item>
-        <item name="gradientStart">#7EE6A1</item>
-        <item name="gradientEnd">#63D48A</item>
+        <item name="shadowDark">#1E7D32</item>
+        <item name="shadowLight">#A5E6B1</item>
+        <item name="gradientStart">#4CAF50</item>
+        <item name="gradientEnd">#2E7D32</item>
+        <item name="innerGradientStart">#66BB6A</item>
+        <item name="innerGradientEnd">#388E3C</item>
+        <item name="innerStroke">#BFFFFFFF</item>
     </style>
 
-    <!-- Theme cho nút xanh dương -->
     <style name="BlueButtonTheme">
-        <item name="shadowDark">#3F6BAF</item>
-        <item name="shadowLight">#A8C2F0</item>
-        <item name="gradientStart">#7EA1E6</item>
-        <item name="gradientEnd">#638AD4</item>
+        <item name="shadowDark">#1A74BB</item>
+        <item name="shadowLight">#82E2FF</item>
+        <item name="gradientStart">#4BD1FF</item>
+        <item name="gradientEnd">#0099FF</item>
+        <item name="innerGradientStart">#70DCFF</item>
+        <item name="innerGradientEnd">#29B0FF</item>
+        <item name="innerStroke">#BFFFFFFF</item>
+    </style>
+
+    <style name="PurpleButtonTheme">
+        <item name="shadowDark">#8A2BE2</item>
+        <item name="shadowLight">#E0B0FF</item>
+        <item name="gradientStart">#BF66FF</item>
+        <item name="gradientEnd">#9933FF</item>
+        <item name="innerGradientStart">#CE85FF</item>
+        <item name="innerGradientEnd">#A64DFF</item>
+        <item name="innerStroke">#BFFFFFFF</item>
+    </style>
+
+    <style name="OrangeButtonTheme">
+        <item name="shadowDark">#C56000</item>
+        <item name="shadowLight">#FFE082</item>
+        <item name="gradientStart">#FFB300</item>
+        <item name="gradientEnd">#FF8C00</item>
+        <item name="innerGradientStart">#FFC44D</item>
+        <item name="innerGradientEnd">#FFA21A</item>
+        <item name="innerStroke">#BFFFFFFF</item>
+    </style>
+
+    <style name="PinkButtonTheme">
+        <item name="shadowDark">#C2185B</item>
+        <item name="shadowLight">#FFB2DD</item>
+        <item name="gradientStart">#FF66B2</item>
+        <item name="gradientEnd">#E60073</item>
+        <item name="innerGradientStart">#FF85C2</item>
+        <item name="innerGradientEnd">#FF3399</item>
+        <item name="innerStroke">#BFFFFFFF</item>
+    </style>
+
+    <style name="RedButtonTheme">
+        <item name="shadowDark">#B71C1C</item>
+        <item name="shadowLight">#FF8A80</item>
+        <item name="gradientStart">#FF5252</item>
+        <item name="gradientEnd">#D32F2F</item>
+        <item name="innerGradientStart">#FF7979</item>
+        <item name="innerGradientEnd">#E53935</item>
+        <item name="innerStroke">#BFFFFFFF</item>
+    </style>
+
+    <style name="YellowButtonTheme">
+        <item name="shadowDark">#D4A017</item>
+        <item name="shadowLight">#FFF59D</item>
+        <item name="gradientStart">#FFEB3B</item>
+        <item name="gradientEnd">#FBC02D</item>
+        <item name="innerGradientStart">#FFF176</item>
+        <item name="innerGradientEnd">#FDD835</item>
+        <item name="innerStroke">#BFFFFFFF</item>
     </style>
 </resources>

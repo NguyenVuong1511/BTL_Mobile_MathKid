@@ -110,15 +110,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long act1_1 = addActivity(db, topic1Id, "Bé tập đếm 1-5", "quiz", 50, 0, 1);
         addQuestion(db, act1_1, "quiz", "Có bao nhiêu chú Gấu Trúc?", "panda", "1", "[\"1\", \"2\", \"3\", \"4\"]");
-        addQuestion(db, act1_1, "quiz", "Đếm xem có bao nhiêu chú Thỏ?", "rabbit", "3", "[\"2\", \"3\", \"5\", \"1\"]");
-        addQuestion(db, act1_1, "quiz", "Có bao nhiêu chú Chó ở đây?", "dog", "2", "[\"1\", \"2\", \"4\", \"3\"]");
-        addQuestion(db, act1_1, "quiz", "Có bao nhiêu quả táo?", "apple", "4", "[\"3\", \"4\", \"5\", \"2\"]");
-        addQuestion(db, act1_1, "quiz", "Có bao nhiêu con mèo?", "cat", "5", "[\"4\", \"5\", \"3\", \"6\"]");
+        addQuestion(db, act1_1, "quiz", "Đếm xem có bao nhiêu chú Thỏ?", "bacontho", "3", "[\"2\", \"3\", \"5\", \"1\"]");
+        addQuestion(db, act1_1, "quiz", "Có bao nhiêu chú Chó ở đây?", "haiconcho", "2", "[\"1\", \"2\", \"4\", \"3\"]");
+        addQuestion(db, act1_1, "quiz", "Có bao nhiêu quả táo?", "namquatao", "5", "[\"3\", \"4\", \"5\", \"2\"]");
+        addQuestion(db, act1_1, "quiz", "Có bao nhiêu con mèo?", "conmeo", "1", "[\"4\", \"1\", \"3\", \"6\"]");
 
         long act1_2 = addActivity(db, topic1Id, "Bé tập đếm 6-10", "quiz", 50, 1, 2);
-        addQuestion(db, act1_2, "quiz", "Đếm số bông hoa?", "flower", "6", "[\"5\", \"6\", \"7\", \"8\"]");
-        addQuestion(db, act1_2, "quiz", "Có bao nhiêu ngôi sao?", "star", "8", "[\"7\", \"8\", \"9\", \"10\"]");
-        addQuestion(db, act1_2, "quiz", "Đếm số con cá?", "fish", "10", "[\"8\", \"9\", \"10\", \"7\"]");
+        addQuestion(db, act1_2, "quiz", "Đếm số bông hoa?", "saubonghoa", "6", "[\"5\", \"6\", \"7\", \"8\"]");
+        addQuestion(db, act1_2, "quiz", "Có bao nhiêu ngôi sao?", "chinngoisao", "9", "[\"7\", \"8\", \"9\", \"10\"]");
+        addQuestion(db, act1_2, "quiz", "Đếm số con cá?", "bayconca", "7", "[\"8\", \"9\", \"10\", \"7\"]");
 
         long act1_3 = addActivity(db, topic1Id, "Tìm số còn thiếu", "fill_blank", 60, 1, 3);
         addQuestion(db, act1_3, "fill_blank", "1, 2, ?, 4, 5", null, "3", "[\"2\", \"3\", \"4\", \"5\"]");
@@ -149,7 +149,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long act3_1 = addActivity(db, topic3Id, "Nhận diện hình khối", "quiz", 60, 1, 1);
         addQuestion(db, act3_1, "quiz", "Đây là hình gì?", "circle", "Hình tròn", "[\"Hình tròn\", \"Hình vuông\", \"Hình tam giác\"]");
-        addQuestion(db, act3_1, "quiz", "Hình nào là hình vuông?", "shapes_mix", "Hình vuông", "[\"Hình tròn\", \"Hình vuông\", \"Hình tam giác\"]");
+        addQuestion(db, act3_1, "quiz", "Đây là hình gì?", "square", "Hình vuông", "[\"Hình tròn\", \"Hình vuông\", \"Hình tam giác\"]");
 
         // TOPIC 4: SO SÁNH & LOGIC
         ContentValues t4 = new ContentValues();
